@@ -8,6 +8,162 @@
 import * as zod from 'zod';
 
 
+export const getAdminDashboardResponseZonesItemOneNameMax = 120;
+
+export const getAdminDashboardResponseZonesItemOneLayoutHintMax = 2000;
+
+export const getAdminDashboardResponseZonesItemOneLowMaxMin = 0;
+export const getAdminDashboardResponseZonesItemOneLowMaxMax = 100000;
+
+export const getAdminDashboardResponseZonesItemOneHighMinMax = 100000;
+
+export const getAdminDashboardResponseZonesItemOneTypicalCycleMinMax = 1440;
+
+export const getAdminDashboardResponseZonesItemOneActiveStartRegExp = new RegExp('^([01][0-9]|2[0-3]):[0-5][0-9]$');
+export const getAdminDashboardResponseZonesItemOneActiveEndRegExp = new RegExp('^([01][0-9]|2[0-3]):[0-5][0-9]$');
+export const getAdminDashboardResponseZonesItemOneUnitsItemMax = 100;
+
+export const getAdminDashboardResponseZonesItemOneUnitsMax = 100;
+
+
+
+export const GetAdminDashboardResponse = zod.object({
+  "day": zod.string().describe('UTC calendar day; counters start when admin support is installed'),
+  "zones": zod.array(zod.object({
+  "name": zod.string().min(1).max(getAdminDashboardResponseZonesItemOneNameMax),
+  "type": zod.enum(['crowd', 'machines']),
+  "layout_hint": zod.string().max(getAdminDashboardResponseZonesItemOneLayoutHintMax),
+  "low_max": zod.number().int().min(getAdminDashboardResponseZonesItemOneLowMaxMin).max(getAdminDashboardResponseZonesItemOneLowMaxMax),
+  "high_min": zod.number().int().min(1).max(getAdminDashboardResponseZonesItemOneHighMinMax),
+  "typical_cycle_min": zod.number().int().min(1).max(getAdminDashboardResponseZonesItemOneTypicalCycleMinMax),
+  "active_start": zod.string().regex(getAdminDashboardResponseZonesItemOneActiveStartRegExp).nullable(),
+  "active_end": zod.string().regex(getAdminDashboardResponseZonesItemOneActiveEndRegExp).nullable(),
+  "units": zod.array(zod.string().min(1).max(getAdminDashboardResponseZonesItemOneUnitsItemMax)).max(getAdminDashboardResponseZonesItemOneUnitsMax)
+}).and(zod.object({
+  "id": zod.number().int(),
+  "slug": zod.string(),
+  "cameras": zod.array(zod.object({
+  "id": zod.number().int(),
+  "path": zod.string(),
+  "last_seen_at": zod.string().nullable(),
+  "last_analysed_at": zod.string().nullable(),
+  "has_frame": zod.boolean(),
+  "frames_received": zod.number().int(),
+  "analysed": zod.number().int(),
+  "allowance_left": zod.number()
+})),
+  "readings": zod.array(zod.object({
+  "id": zod.number().int(),
+  "captured_at": zod.string(),
+  "raw": zod.record(zod.string(), zod.unknown())
+}))
+})))
+})
+
+
+export const createAdminZoneBodyNameMax = 120;
+
+export const createAdminZoneBodyLayoutHintMax = 2000;
+
+export const createAdminZoneBodyLowMaxMin = 0;
+export const createAdminZoneBodyLowMaxMax = 100000;
+
+export const createAdminZoneBodyHighMinMax = 100000;
+
+export const createAdminZoneBodyTypicalCycleMinMax = 1440;
+
+export const createAdminZoneBodyActiveStartRegExp = new RegExp('^([01][0-9]|2[0-3]):[0-5][0-9]$');
+export const createAdminZoneBodyActiveEndRegExp = new RegExp('^([01][0-9]|2[0-3]):[0-5][0-9]$');
+export const createAdminZoneBodyUnitsItemMax = 100;
+
+export const createAdminZoneBodyUnitsMax = 100;
+
+
+
+export const CreateAdminZoneBody = zod.object({
+  "name": zod.string().min(1).max(createAdminZoneBodyNameMax),
+  "type": zod.enum(['crowd', 'machines']),
+  "layout_hint": zod.string().max(createAdminZoneBodyLayoutHintMax),
+  "low_max": zod.number().int().min(createAdminZoneBodyLowMaxMin).max(createAdminZoneBodyLowMaxMax),
+  "high_min": zod.number().int().min(1).max(createAdminZoneBodyHighMinMax),
+  "typical_cycle_min": zod.number().int().min(1).max(createAdminZoneBodyTypicalCycleMinMax),
+  "active_start": zod.string().regex(createAdminZoneBodyActiveStartRegExp).nullable(),
+  "active_end": zod.string().regex(createAdminZoneBodyActiveEndRegExp).nullable(),
+  "units": zod.array(zod.string().min(1).max(createAdminZoneBodyUnitsItemMax)).max(createAdminZoneBodyUnitsMax)
+})
+
+export const CreateAdminZoneResponse = zod.object({
+  "id": zod.number().int()
+})
+
+
+
+
+
+export const UpdateAdminZoneParams = zod.object({
+  "id": zod.coerce.number().int().min(1)
+})
+
+export const updateAdminZoneBodyNameMax = 120;
+
+export const updateAdminZoneBodyLayoutHintMax = 2000;
+
+export const updateAdminZoneBodyLowMaxMin = 0;
+export const updateAdminZoneBodyLowMaxMax = 100000;
+
+export const updateAdminZoneBodyHighMinMax = 100000;
+
+export const updateAdminZoneBodyTypicalCycleMinMax = 1440;
+
+export const updateAdminZoneBodyActiveStartRegExp = new RegExp('^([01][0-9]|2[0-3]):[0-5][0-9]$');
+export const updateAdminZoneBodyActiveEndRegExp = new RegExp('^([01][0-9]|2[0-3]):[0-5][0-9]$');
+export const updateAdminZoneBodyUnitsItemMax = 100;
+
+export const updateAdminZoneBodyUnitsMax = 100;
+
+
+
+export const UpdateAdminZoneBody = zod.object({
+  "name": zod.string().min(1).max(updateAdminZoneBodyNameMax),
+  "type": zod.enum(['crowd', 'machines']),
+  "layout_hint": zod.string().max(updateAdminZoneBodyLayoutHintMax),
+  "low_max": zod.number().int().min(updateAdminZoneBodyLowMaxMin).max(updateAdminZoneBodyLowMaxMax),
+  "high_min": zod.number().int().min(1).max(updateAdminZoneBodyHighMinMax),
+  "typical_cycle_min": zod.number().int().min(1).max(updateAdminZoneBodyTypicalCycleMinMax),
+  "active_start": zod.string().regex(updateAdminZoneBodyActiveStartRegExp).nullable(),
+  "active_end": zod.string().regex(updateAdminZoneBodyActiveEndRegExp).nullable(),
+  "units": zod.array(zod.string().min(1).max(updateAdminZoneBodyUnitsItemMax)).max(updateAdminZoneBodyUnitsMax)
+})
+
+export const UpdateAdminZoneResponse = zod.object({
+  "id": zod.number().int()
+})
+
+
+
+
+
+export const CreateAdminCameraParams = zod.object({
+  "id": zod.coerce.number().int().min(1)
+})
+
+export const CreateAdminCameraResponse = zod.object({
+  "id": zod.number().int()
+})
+
+
+
+
+
+export const GetAdminCameraFrameParams = zod.object({
+  "id": zod.coerce.number().int().min(1)
+})
+
+export const GetAdminCameraFrameResponse = zod.object({
+  "image": zod.string().nullable()
+})
+
+
 export const GetZonesResponseItem = zod.object({
   "slug": zod.string(),
   "name": zod.string(),

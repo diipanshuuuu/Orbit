@@ -25,6 +25,10 @@ import type {
 } from '@tanstack/react-query';
 
 import type {
+  AdminDashboard,
+  AdminSaved,
+  AdminZoneInput,
+  GetAdminCameraFrame200,
   HealthStatus,
   IngestInput,
   IngestReply,
@@ -57,6 +61,429 @@ const withQueryKey = <T extends object, K>(query: T, queryKey: K): T & { queryKe
   }
   return result;
 };
+
+export const getGetAdminDashboardUrl = () => {
+
+
+
+
+  return `/api/admin`
+}
+
+export const getAdminDashboard = async ( options?: Parameters<typeof customFetch>[1]): Promise<AdminDashboard> => {
+
+  return customFetch<AdminDashboard>(getGetAdminDashboardUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetAdminDashboardQueryKey = () => {
+    return [
+    `/api/admin`
+    ] as const;
+    }
+
+
+export const getGetAdminDashboardQueryOptions = <TData = Awaited<ReturnType<typeof getAdminDashboard>>, TError = ErrorType<void>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAdminDashboard>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetAdminDashboardQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getAdminDashboard>>> = ({ signal }) => getAdminDashboard({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getAdminDashboard>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetAdminDashboardQueryResult = NonNullable<Awaited<ReturnType<typeof getAdminDashboard>>>
+export type GetAdminDashboardQueryError = ErrorType<void>
+
+
+export function useGetAdminDashboard<TData = Awaited<ReturnType<typeof getAdminDashboard>>, TError = ErrorType<void>>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAdminDashboard>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getAdminDashboard>>,
+          TError,
+          Awaited<ReturnType<typeof getAdminDashboard>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetAdminDashboard<TData = Awaited<ReturnType<typeof getAdminDashboard>>, TError = ErrorType<void>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAdminDashboard>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getAdminDashboard>>,
+          TError,
+          Awaited<ReturnType<typeof getAdminDashboard>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetAdminDashboard<TData = Awaited<ReturnType<typeof getAdminDashboard>>, TError = ErrorType<void>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAdminDashboard>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useGetAdminDashboard<TData = Awaited<ReturnType<typeof getAdminDashboard>>, TError = ErrorType<void>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAdminDashboard>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetAdminDashboardQueryOptions(options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getCreateAdminZoneUrl = () => {
+
+
+
+
+  return `/api/admin/zones`
+}
+
+export const createAdminZone = async (adminZoneInput: AdminZoneInput, options?: Parameters<typeof customFetch>[1]): Promise<AdminSaved> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return customFetch<AdminSaved>(getCreateAdminZoneUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(adminZoneInput)
+  }
+);}
+
+
+
+
+
+export const getCreateAdminZoneMutationKey = () => ['createAdminZone'] as const;
+
+export const getCreateAdminZoneMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createAdminZone>>, TError,CreateAdminZoneMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof createAdminZone>>, TError,CreateAdminZoneMutationVariables, TContext> => {
+
+const mutationKey = getCreateAdminZoneMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createAdminZone>>, CreateAdminZoneMutationVariables> = (props) => {
+          const {data} = props ?? {};
+
+          return  createAdminZone(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CreateAdminZoneMutationResult = NonNullable<Awaited<ReturnType<typeof createAdminZone>>>
+    export type CreateAdminZoneMutationBody = BodyType<AdminZoneInput>
+    export type CreateAdminZoneMutationError = ErrorType<unknown>
+    export type CreateAdminZoneMutationVariables = {data: BodyType<AdminZoneInput>}
+
+    export const useCreateAdminZone = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createAdminZone>>, TError,CreateAdminZoneMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof createAdminZone>>,
+        TError,
+        CreateAdminZoneMutationVariables,
+        TContext
+      > => {
+      return useMutation(getCreateAdminZoneMutationOptions(options), queryClient);
+    }
+
+export const getUpdateAdminZoneUrl = (id: number,) => {
+
+
+
+
+  return `/api/admin/zones/${id}`
+}
+
+export const updateAdminZone = async (id: number,
+    adminZoneInput: AdminZoneInput, options?: Parameters<typeof customFetch>[1]): Promise<AdminSaved> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return customFetch<AdminSaved>(getUpdateAdminZoneUrl(id),
+  {
+    ...options,
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(adminZoneInput)
+  }
+);}
+
+
+
+
+
+export const getUpdateAdminZoneMutationKey = () => ['updateAdminZone'] as const;
+
+export const getUpdateAdminZoneMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateAdminZone>>, TError,UpdateAdminZoneMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof updateAdminZone>>, TError,UpdateAdminZoneMutationVariables, TContext> => {
+
+const mutationKey = getUpdateAdminZoneMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateAdminZone>>, UpdateAdminZoneMutationVariables> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  updateAdminZone(id,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type UpdateAdminZoneMutationResult = NonNullable<Awaited<ReturnType<typeof updateAdminZone>>>
+    export type UpdateAdminZoneMutationBody = BodyType<AdminZoneInput>
+    export type UpdateAdminZoneMutationError = ErrorType<unknown>
+    export type UpdateAdminZoneMutationVariables = {id: number;data: BodyType<AdminZoneInput>}
+
+    export const useUpdateAdminZone = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateAdminZone>>, TError,UpdateAdminZoneMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof updateAdminZone>>,
+        TError,
+        UpdateAdminZoneMutationVariables,
+        TContext
+      > => {
+      return useMutation(getUpdateAdminZoneMutationOptions(options), queryClient);
+    }
+
+export const getCreateAdminCameraUrl = (id: number,) => {
+
+
+
+
+  return `/api/admin/zones/${id}/cameras`
+}
+
+export const createAdminCamera = async (id: number, options?: Parameters<typeof customFetch>[1]): Promise<AdminSaved> => {
+
+  return customFetch<AdminSaved>(getCreateAdminCameraUrl(id),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+);}
+
+
+
+
+
+export const getCreateAdminCameraMutationKey = () => ['createAdminCamera'] as const;
+
+export const getCreateAdminCameraMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createAdminCamera>>, TError,CreateAdminCameraMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof createAdminCamera>>, TError,CreateAdminCameraMutationVariables, TContext> => {
+
+const mutationKey = getCreateAdminCameraMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createAdminCamera>>, CreateAdminCameraMutationVariables> = (props) => {
+          const {id} = props ?? {};
+
+          return  createAdminCamera(id,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CreateAdminCameraMutationResult = NonNullable<Awaited<ReturnType<typeof createAdminCamera>>>
+
+    export type CreateAdminCameraMutationError = ErrorType<unknown>
+    export type CreateAdminCameraMutationVariables = {id: number}
+
+    export const useCreateAdminCamera = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createAdminCamera>>, TError,CreateAdminCameraMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof createAdminCamera>>,
+        TError,
+        CreateAdminCameraMutationVariables,
+        TContext
+      > => {
+      return useMutation(getCreateAdminCameraMutationOptions(options), queryClient);
+    }
+
+export const getGetAdminCameraFrameUrl = (id: number,) => {
+
+
+
+
+  return `/api/admin/cameras/${id}/frame`
+}
+
+export const getAdminCameraFrame = async (id: number, options?: Parameters<typeof customFetch>[1]): Promise<GetAdminCameraFrame200> => {
+
+  return customFetch<GetAdminCameraFrame200>(getGetAdminCameraFrameUrl(id),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetAdminCameraFrameQueryKey = (id: number,) => {
+    return [
+    `/api/admin/cameras/${id}/frame`
+    ] as const;
+    }
+
+
+export const getGetAdminCameraFrameQueryOptions = <TData = Awaited<ReturnType<typeof getAdminCameraFrame>>, TError = ErrorType<unknown>>(id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAdminCameraFrame>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetAdminCameraFrameQueryKey(id);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getAdminCameraFrame>>> = ({ signal }) => getAdminCameraFrame(id, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getAdminCameraFrame>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetAdminCameraFrameQueryResult = NonNullable<Awaited<ReturnType<typeof getAdminCameraFrame>>>
+export type GetAdminCameraFrameQueryError = ErrorType<unknown>
+
+
+export function useGetAdminCameraFrame<TData = Awaited<ReturnType<typeof getAdminCameraFrame>>, TError = ErrorType<unknown>>(
+ id: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAdminCameraFrame>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getAdminCameraFrame>>,
+          TError,
+          Awaited<ReturnType<typeof getAdminCameraFrame>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetAdminCameraFrame<TData = Awaited<ReturnType<typeof getAdminCameraFrame>>, TError = ErrorType<unknown>>(
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAdminCameraFrame>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getAdminCameraFrame>>,
+          TError,
+          Awaited<ReturnType<typeof getAdminCameraFrame>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetAdminCameraFrame<TData = Awaited<ReturnType<typeof getAdminCameraFrame>>, TError = ErrorType<unknown>>(
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAdminCameraFrame>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useGetAdminCameraFrame<TData = Awaited<ReturnType<typeof getAdminCameraFrame>>, TError = ErrorType<unknown>>(
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAdminCameraFrame>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetAdminCameraFrameQueryOptions(id,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
 
 export const getGetZonesUrl = () => {
 

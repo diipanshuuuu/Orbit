@@ -6,6 +6,15 @@
  * OpenAPI spec version: 0.1.0
  */
 
+export * from './adminCamera';
+export * from './adminDashboard';
+export * from './adminReading';
+export * from './adminReadingRaw';
+export * from './adminSaved';
+export * from './adminZone';
+export * from './adminZoneInput';
+export * from './adminZoneInputType';
+export * from './getAdminCameraFrame200';
 export * from './healthStatus';
 export * from './ingestInput';
 export * from './ingestReply';

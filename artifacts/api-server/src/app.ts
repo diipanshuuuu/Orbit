@@ -46,7 +46,7 @@ app.use("/api", (_req, res) => { res.status(404).json({ error: "API route not fo
 // In production the same Express process serves the Vite build. No second server.
 if (process.env.NODE_ENV === "production") {
   const publicDir = path.resolve(import.meta.dirname, "../public");
-  app.use("/cam", (_req, res, next) => {
+  app.use(["/cam", "/admin"], (_req, res, next) => {
     res.setHeader("Referrer-Policy", "no-referrer");
     res.setHeader("Cache-Control", "no-store");
     next();

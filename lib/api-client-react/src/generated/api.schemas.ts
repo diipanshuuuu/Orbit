@@ -5,6 +5,94 @@
  * API specification
  * OpenAPI spec version: 0.1.0
  */
+export interface AdminSaved {
+  id: number;
+}
+
+export type AdminZoneInputType = typeof AdminZoneInputType[keyof typeof AdminZoneInputType];
+
+
+export const AdminZoneInputType = {
+  crowd: 'crowd',
+  machines: 'machines',
+} as const;
+
+export interface AdminZoneInput {
+  /**
+     * @minLength 1
+     * @maxLength 120
+     */
+  name: string;
+  type: AdminZoneInputType;
+  /** @maxLength 2000 */
+  layout_hint: string;
+  /**
+     * @minimum 0
+     * @maximum 100000
+     */
+  low_max: number;
+  /**
+     * @minimum 1
+     * @maximum 100000
+     */
+  high_min: number;
+  /**
+     * @minimum 1
+     * @maximum 1440
+     */
+  typical_cycle_min: number;
+  /**
+     * @nullable
+     * @pattern ^([01][0-9]|2[0-3]):[0-5][0-9]$
+     */
+  active_start: string | null;
+  /**
+     * @nullable
+     * @pattern ^([01][0-9]|2[0-3]):[0-5][0-9]$
+     */
+  active_end: string | null;
+  /**
+     * @maxItems 100
+     * @items.minLength 1
+     * @items.maxLength 100
+     */
+  units: string[];
+}
+
+export interface AdminCamera {
+  id: number;
+  path: string;
+  /** @nullable */
+  last_seen_at: string | null;
+  /** @nullable */
+  last_analysed_at: string | null;
+  has_frame: boolean;
+  frames_received: number;
+  analysed: number;
+  allowance_left: number;
+}
+
+export type AdminReadingRaw = { [key: string]: unknown };
+
+export interface AdminReading {
+  id: number;
+  captured_at: string;
+  raw: AdminReadingRaw;
+}
+
+export type AdminZone = AdminZoneInput & {
+  id: number;
+  slug: string;
+  cameras: AdminCamera[];
+  readings: AdminReading[];
+};
+
+export interface AdminDashboard {
+  /** UTC calendar day; counters start when admin support is installed */
+  day: string;
+  zones: AdminZone[];
+}
+
 export type ZoneType = typeof ZoneType[keyof typeof ZoneType];
 
 
@@ -97,4 +185,9 @@ export interface IngestReply {
 export interface HealthStatus {
   status: string;
 }
+
+export type GetAdminCameraFrame200 = {
+  /** @nullable */
+  image: string | null;
+};
 

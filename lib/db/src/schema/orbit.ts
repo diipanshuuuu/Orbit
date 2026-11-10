@@ -1,4 +1,4 @@
-import { pgTable, serial, text, integer, boolean, timestamp, doublePrecision, jsonb, uniqueIndex } from "drizzle-orm/pg-core";
+import { pgTable, serial, text, integer, boolean, timestamp, doublePrecision, jsonb, uniqueIndex, date } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 
 const instant = (name: string) => timestamp(name, { withTimezone: true });
@@ -13,6 +13,8 @@ export const zones = pgTable("zones", {
   typicalCycleMin: integer("typical_cycle_min").notNull().default(45),
   isDemo: boolean("is_demo").notNull().default(false),
   checkedAt: instant("checked_at"),
+  activeStart: text("active_start"),
+  activeEnd: text("active_end"),
 });
 export const units = pgTable("units", {
   id: serial("id").primaryKey(),
@@ -38,6 +40,13 @@ export const readings = pgTable("readings", {
   raw: jsonb("raw_model_json").notNull(),
   peopleCount: integer("people_count"),
 });
+export const cameraDaily = pgTable("camera_daily", {
+  id: serial("id").primaryKey(),
+  cameraId: integer("camera").notNull().references(() => cameras.id, { onDelete: "cascade" }),
+  day: date("day", { mode: "string" }).notNull(),
+  framesReceived: integer("frames_received").notNull().default(0),
+  analysed: integer("analysed").notNull().default(0),
+}, (t) => [uniqueIndex("camera_daily_camera_day").on(t.cameraId, t.day)]);
 export const zoneStatuses = pgTable("zone_status", {
   zoneId: integer("zone").primaryKey().references(() => zones.id, { onDelete: "cascade" }),
   state: text("state", { enum: ["low", "medium", "high", "unknown"] }).notNull().default("unknown"),

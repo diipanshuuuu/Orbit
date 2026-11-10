@@ -7,6 +7,7 @@ import NotFound from '@/pages/not-found';
 import Home from '@/pages/home';
 import ZonePage from '@/pages/zone';
 import CameraPage from '@/pages/camera';
+import AdminPage from '@/pages/admin';
 import {
   Route,
   Switch,
@@ -25,6 +26,7 @@ function Router() {
         <Route path="/" component={Home} />
         <Route path="/z/:slug" component={ZonePage} />
         <Route path="/cam/:token" component={CameraPage} />
+        <Route path="/admin" component={AdminPage} />
         <Route component={NotFound} />
       </Switch>
     </RoutedErrorBoundary>

@@ -1,10 +1,11 @@
-import { db, zones, cameras, units, unitStatuses, zoneStatuses, readings } from "@workspace/db";
-import { eq, desc } from "drizzle-orm";
+import { db, zones, cameras, units, unitStatuses, zoneStatuses, readings, cameraDaily } from "@workspace/db";
+import { eq, desc, sql } from "drizzle-orm";
 import type { ZoneRow } from "@workspace/db";
 import { crowdLevel, freshness, refillAllowance, remainingTime, shouldAnalyse, transitionUnit } from "./status";
 import { MAX_AI_CALLS_PER_DAY } from "./config";
 import { analyzeFrame } from "./vision";
 import type { IngestInput } from "@workspace/api-zod";
+import { utcCounterDay } from "./admin-validation";
 
 type Store = Pick<typeof db, "select">;
 const iso = (date: Date | null | undefined) => date?.toISOString() ?? null;
@@ -59,7 +60,7 @@ export async function ingest(input: IngestInput) {
     const zoneUnits = await tx.select().from(units).where(eq(units.zoneId, zone.id));
     const statusRows = await tx.select({ status: unitStatuses }).from(unitStatuses)
       .innerJoin(units, eq(unitStatuses.unitId, units.id)).where(eq(units.zoneId, zone.id));
-    const pending = statusRows.some(({ status }) => status.pendingState !== null);
+    const pending = zone.checkedAt === null || statusRows.some(({ status }) => status.pendingState !== null);
     const analyse = shouldAnalyse({
       changed: input.changed, pending, allowance, now,
       lastAnalysedAt: camera.lastAnalysedAt, lastAttemptedAt: camera.lastAttemptedAt,
@@ -105,6 +106,12 @@ export async function ingest(input: IngestInput) {
         zone.checkedAt = now;
       }
     }
+    await tx.insert(cameraDaily).values({
+      cameraId: camera.id, day: utcCounterDay(now), framesReceived: 1, analysed: analysed ? 1 : 0,
+    }).onConflictDoUpdate({ target: [cameraDaily.cameraId, cameraDaily.day], set: {
+      framesReceived: sql`${cameraDaily.framesReceived} + 1`,
+      analysed: sql`${cameraDaily.analysed} + ${analysed ? 1 : 0}`,
+    } });
     const status = await publicZone(tx, zone, new Date());
     // Freshness masking in publicZone must not suppress a pending-unit recheck.
     const pendingRows = await tx.select({ pendingState: unitStatuses.pendingState }).from(unitStatuses)
