@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 export type Tone = "low" | "medium" | "high" | "grey";
 
 export function DemoBadge() {
-  return <span className="inline-flex rounded-full border bg-muted px-2.5 py-1 text-[11px] font-semibold tracking-normal" data-testid="badge-demo">Demo data</span>;
+  return <span className="inline-flex min-h-6 items-center rounded-full border border-foreground/10 bg-muted/80 px-2.5 py-1 text-[10px] font-bold tracking-wide text-muted-foreground" data-testid="badge-demo">Demo data</span>;
 }
 
 export function isLive(zone: Zone) {
@@ -42,12 +42,12 @@ export function StatusPill({ zone, size = "lg" }: { zone: Zone; size?: "lg" | "x
     <span
       data-testid={"status-pill-" + zone.slug}
       className={cn(
-        "inline-flex items-center gap-2.5 rounded-full font-extrabold tracking-tight",
-        size === "xl" ? "px-6 py-3 text-2xl" : "px-4 py-2 text-lg",
+        "inline-flex min-h-11 items-center gap-3 rounded-full font-extrabold tracking-tight",
+        size === "xl" ? "px-5 py-3 text-xl sm:px-6 sm:text-2xl" : "px-4 py-2 text-base sm:text-lg",
       )}
       style={{ background: "hsl(var(" + v + ") / 0.13)", color: "hsl(var(" + v + "))" }}
     >
-      <span className={cn("relative h-2.5 w-2.5 rounded-full bg-current", live && "ping")} />
+      <span className={cn("relative h-3 w-3 shrink-0 rounded-full bg-current", live && "ping")} />
       {zoneLabel(zone)}
     </span>
   );
@@ -60,16 +60,16 @@ export function KeyNumber({ zone }: { zone: Zone }) {
   if (zone.type === "machines") {
     const free = zone.units.filter((u) => u.state === "free").length;
     return (
-      <span data-testid={"text-key-" + zone.slug} className="flex items-baseline gap-1.5">
-        <span className="text-5xl font-extrabold tabular-nums leading-none">{free}</span>
-        <span className="text-muted-foreground text-sm">of {zone.units.length} free</span>
+      <span data-testid={"text-key-" + zone.slug} className="flex items-baseline gap-2">
+        <span className="text-5xl font-extrabold tabular-nums leading-none tracking-[-.06em]">{free}</span>
+        <span className="text-sm font-semibold text-muted-foreground">of {zone.units.length} free</span>
       </span>
     );
   }
   return (
-    <span data-testid={"text-key-" + zone.slug} className="flex items-baseline gap-1.5">
-      <span className="text-5xl font-extrabold tabular-nums leading-none">{zone.people_count ?? "–"}</span>
-      <span className="text-muted-foreground text-sm">{zone.people_count === 1 ? "person" : "people"}</span>
+    <span data-testid={"text-key-" + zone.slug} className="flex items-baseline gap-2">
+      <span className="text-5xl font-extrabold tabular-nums leading-none tracking-[-.06em]">{zone.people_count ?? "–"}</span>
+      <span className="text-sm font-semibold text-muted-foreground">{zone.people_count === 1 ? "person" : "people"}</span>
     </span>
   );
 }

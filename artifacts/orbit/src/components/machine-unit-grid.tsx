@@ -12,15 +12,15 @@ export function MachineUnitGrid({ zone }: { zone: Zone }) {
           <li
             key={unit.label}
             data-testid={"row-unit-" + unit.label}
-            className="min-w-0 rounded-2xl border bg-card p-3 sm:p-4"
+            className="resident-card min-w-0 rounded-[1.35rem] border bg-card/90 p-3.5 sm:p-4"
             style={{ borderColor: `hsl(var(${presentation.color}) / 0.32)` }}
           >
             <article className="flex min-h-28 flex-col" aria-label={`${unit.label}: ${presentation.label}`}>
-              <span className="font-mono text-xs uppercase tracking-widest text-muted-foreground">{unit.label}</span>
-              <span className="mt-2 text-lg font-bold leading-tight" style={{ color }}>
+              <span className="font-mono text-[10px] font-semibold uppercase tracking-[.18em] text-muted-foreground">{unit.label}</span>
+              <span className="mt-2 text-xl font-extrabold leading-tight tracking-tight" style={{ color }}>
                 {presentation.label}
               </span>
-              <span className="mt-2 text-sm font-semibold tabular-nums">
+                <span className="mt-2 text-sm font-bold tabular-nums">
                 {presentation.time}
               </span>
               {presentation.timeLabel && (

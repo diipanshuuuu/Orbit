@@ -11,19 +11,20 @@ export default function Home() {
 
   return (
     <Shell>
-      <header className="pt-8 pb-6 rise">
-        <h1 className="text-4xl font-extrabold tracking-tight leading-[0.95]">Before you walk,<br /><span className="text-primary">look here.</span></h1>
-        <p className="mt-3 text-muted-foreground text-sm max-w-xs">Live counts from cameras in shared rooms. No faces, no photos, just numbers.</p>
+      <header className="pt-9 pb-7 rise">
+        <p className="mb-3 font-mono text-[10px] uppercase tracking-[.22em] text-primary">A quick check for shared spaces</p>
+        <h1 className="text-[2.65rem] font-extrabold tracking-[-.055em] leading-[.94] sm:text-5xl">Before you walk,<br /><span className="text-primary">look here.</span></h1>
+        <p className="mt-4 max-w-sm text-[15px] leading-relaxed text-muted-foreground">Live counts for shared rooms and machines. Residents never see camera images, and no one is identified.</p>
       </header>
 
       {isLoading && (
         <div className="space-y-3">
-          {[0, 1, 2].map((i) => <div key={i} className="h-40 rounded-3xl bg-muted animate-pulse" />)}
+          {[0, 1, 2].map((i) => <div key={i} className="h-44 rounded-[1.6rem] border border-foreground/5 bg-card/65 animate-pulse" />)}
         </div>
       )}
 
       {isError && (
-        <div className="rounded-3xl border bg-card p-6 text-center rise">
+        <div className="resident-card rounded-[1.6rem] border bg-card p-6 text-center rise">
           <p className="font-semibold">Could not reach Orbit.</p>
           <p className="text-sm text-muted-foreground mt-1">Check your connection and try again.</p>
           <button data-testid="button-retry" onClick={() => refetch()} className="mt-4 inline-flex items-center gap-2 rounded-full bg-primary text-primary-foreground px-5 py-2.5 font-semibold active:scale-95 transition-transform">
@@ -33,7 +34,7 @@ export default function Home() {
       )}
 
       {data && data.length === 0 && (
-        <div className="rounded-3xl border border-dashed p-8 text-center rise">
+        <div className="rounded-[1.6rem] border border-dashed border-foreground/20 bg-card/40 p-8 text-center rise">
           <p className="font-semibold">No rooms are being watched yet.</p>
           <p className="text-sm text-muted-foreground mt-1">Once a camera is set up, its room appears here.</p>
         </div>
@@ -45,22 +46,22 @@ export default function Home() {
             <Link
               href={"/z/" + z.slug}
               data-testid={"card-zone-" + z.slug}
-              className="group relative block overflow-hidden rounded-3xl border bg-card p-5 transition-transform active:scale-[0.985]"
+              className="resident-card group relative block min-h-44 overflow-hidden rounded-[1.6rem] border bg-card/90 p-5 pl-6 transition-[transform,border-color,box-shadow] hover:border-primary/25 hover:shadow-md active:scale-[0.985] focus-visible:outline-none"
             >
               <span className="absolute inset-y-0 left-0 w-1.5" style={{ background: "hsl(var(" + toneVar(zoneTone(z)) + "))" }} />
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <p className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">{z.type === "machines" ? "Machines" : "Room"}</p>
-                  <h2 className="text-xl font-bold mt-0.5">{z.name}</h2>
+                  <p className="font-mono text-[10px] uppercase tracking-[.18em] text-muted-foreground">{z.type === "machines" ? "Machines" : "Room"}</p>
+                  <h2 className="text-[1.35rem] font-bold tracking-tight mt-1">{z.name}</h2>
                   {z.is_demo && <div className="mt-1.5"><DemoBadge /></div>}
                 </div>
                 <ChevronRight className="h-5 w-5 text-muted-foreground transition-transform group-hover:translate-x-1" />
               </div>
-              <div className="mt-4 flex items-end justify-between gap-3 flex-wrap">
+              <div className="mt-5 flex items-end justify-between gap-3 flex-wrap">
                 <StatusPill zone={z} />
                 <KeyNumber zone={z} />
               </div>
-              <div className="mt-4 pt-3 border-t border-dashed"><Freshness zone={z} now={now} /></div>
+              <div className="mt-4 border-t border-dashed border-foreground/15 pt-3"><Freshness zone={z} now={now} /></div>
             </Link>
           </li>
         ))}

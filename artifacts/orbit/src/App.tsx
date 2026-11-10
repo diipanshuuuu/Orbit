@@ -8,6 +8,8 @@ import Home from '@/pages/home';
 import ZonePage from '@/pages/zone';
 import CameraPage from '@/pages/camera';
 import AdminPage from '@/pages/admin';
+import HowItWorks from '@/pages/how-it-works';
+import { PageMetadata } from '@/components/page-metadata';
 import { UsageTracker } from '@/components/usage-tracker';
 import {
   Route,
@@ -26,6 +28,7 @@ function Router() {
       <Switch>
         <Route path="/" component={Home} />
         <Route path="/z/:slug" component={ZonePage} />
+        <Route path="/how-it-works" component={HowItWorks} />
         <Route path="/cam/:token" component={CameraPage} />
         <Route path="/admin" component={AdminPage} />
         <Route component={NotFound} />
@@ -44,6 +47,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, '')}>
+          <PageMetadata />
           <UsageTracker />
           <Router />
         </WouterRouter>

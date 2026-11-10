@@ -433,11 +433,48 @@
 }
 
 :root{--st-low:152 58% 34%;--st-medium:36 92% 46%;--st-high:356 72% 50%;--st-grey:232 10% 52%;}
-body{background-image:radial-gradient(circle at 85% -10%,hsl(246 58% 42%/.10),transparent 45%);min-height:100dvh}
-body::before{content:'';position:fixed;inset:0;pointer-events:none;opacity:.05;z-index:50;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.9'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E")}
 @keyframes orbit-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 .rise{animation:orbit-in .5s cubic-bezier(.2,.8,.2,1) both}
 @keyframes orbit-ping{0%{transform:scale(1);opacity:.6}100%{transform:scale(2.6);opacity:0}}
 .ping::after{content:'';position:absolute;inset:0;border-radius:999px;background:currentColor;animation:orbit-ping 2s ease-out infinite}
 @keyframes orbit-spin{to{transform:rotate(360deg)}}
 .orbit-spin{animation:orbit-spin 6s linear infinite}
+
+/* Resident surfaces only: camera and admin routes keep their own presentation. */
+.resident-app-shell {
+  --st-low: 151 57% 31%;
+  --st-medium: 35 89% 40%;
+  --st-high: 355 67% 45%;
+  --st-grey: 228 9% 43%;
+  min-height: 100dvh;
+  background:
+    radial-gradient(ellipse at 82% 0%, hsl(246 58% 42% / .09), transparent 30rem),
+    hsl(var(--background));
+  isolation: isolate;
+}
+.resident-app-shell::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: .035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.9'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.resident-app-shell .resident-width { position: relative; z-index: 1; width: min(100%, 38rem); }
+.resident-app-shell .resident-card {
+  border-color: hsl(var(--foreground) / .11);
+  box-shadow: 0 8px 24px hsl(232 30% 20% / .045), 0 1px 2px hsl(232 30% 20% / .04);
+}
+.resident-app-shell a:focus-visible,
+.resident-app-shell button:focus-visible {
+  outline: 3px solid hsl(var(--primary) / .55);
+  outline-offset: 3px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .resident-app-shell *, .resident-app-shell *::before, .resident-app-shell *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+}

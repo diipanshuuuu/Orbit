@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { Link } from "wouter";
+import { Info } from "lucide-react";
 
 export function Logo() {
   return (
@@ -13,13 +14,19 @@ export function Logo() {
 
 export function Shell({ children }: { children: ReactNode }) {
   return (
-    <div className="min-h-[100dvh] mx-auto max-w-md px-4 pb-12">
-      <nav className="flex items-center justify-between pt-5">
+    <div className="resident-app-shell">
+      <div className="resident-width mx-auto min-h-[100dvh] px-4 pb-12 sm:px-6">
+      <nav aria-label="Resident navigation" className="flex items-center justify-between pt-5">
         <Link href="/" data-testid="link-home" className="flex items-center gap-2 font-extrabold text-lg tracking-tight">
           <Logo /> Orbit
         </Link>
+        <Link href="/how-it-works" data-testid="link-how-it-works" className="inline-flex min-h-11 items-center gap-2 rounded-full border border-foreground/10 bg-card/75 px-3.5 text-sm font-semibold text-muted-foreground transition-colors hover:border-primary/25 hover:text-foreground">
+          <Info className="h-4 w-4 text-primary" />
+          <span>How it works</span>
+        </Link>
       </nav>
       {children}
+      </div>
     </div>
   );
 }

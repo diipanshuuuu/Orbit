@@ -1,0 +1,38 @@
+@import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=JetBrains+Mono:wght@400;600&display=swap");
+
+:root {
+  --background: 40 33% 96%;
+  --foreground: 232 38% 16%;
+  --card: 40 40% 99%;
+  --card-foreground: 232 38% 16%;
+  --border: 232 18% 86%;
+  --input: 232 18% 82%;
+  --primary: 246 58% 42%;
+  --primary-foreground: 40 40% 98%;
+  --secondary: 232 25% 92%;
+  --secondary-foreground: 232 38% 16%;
+  --muted: 38 22% 91%;
+  --muted-foreground: 232 12% 44%;
+  --accent: 16 88% 58%;
+  --accent-foreground: 40 40% 98%;
+  --destructive: 356 72% 48%;
+  --ring: 246 58% 42%;
+  --app-font-sans: 'Bricolage Grotesque', system-ui, sans-serif;
+  --app-font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --radius: 1rem;
+  --st-low: 152 58% 34%;
+  --st-medium: 36 92% 46%;
+  --st-high: 356 72% 50%;
+  --st-grey: 232 10% 52%;
+}
+
+.orbit-current {
+  min-height: 100vh;
+  color: hsl(var(--foreground));
+  background: hsl(var(--background));
+  font-family: var(--app-font-sans);
+}
+
+.orbit-current .font-mono {
+  font-family: var(--app-font-mono);
+}

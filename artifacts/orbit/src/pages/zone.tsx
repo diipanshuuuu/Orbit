@@ -15,7 +15,7 @@ export default function ZonePage() {
 
   return (
     <Shell>
-      <Link href="/" data-testid="link-back" className="mt-6 inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground">
+      <Link href="/" data-testid="link-back" className="mt-6 inline-flex min-h-11 items-center gap-2 rounded-full pr-3 text-sm font-semibold text-muted-foreground transition-colors hover:text-foreground">
         <ArrowLeft className="h-4 w-4" /> All rooms
       </Link>
 
@@ -39,18 +39,18 @@ export default function ZonePage() {
 
       {zone && (
         <div className="rise">
-          <p className="mt-6 font-mono text-[11px] uppercase tracking-widest text-muted-foreground">{zone.type === "machines" ? "Machines" : "Room"}</p>
-          <h1 data-testid="text-zone-name" className="text-4xl font-extrabold tracking-tight">{zone.name}</h1>
+          <p className="mt-6 font-mono text-[10px] uppercase tracking-[.2em] text-muted-foreground">{zone.type === "machines" ? "Machines" : "Room"}</p>
+          <h1 data-testid="text-zone-name" className="text-[2.65rem] font-extrabold tracking-[-.055em] leading-none">{zone.name}</h1>
           {zone.is_demo && <div className="mt-2"><DemoBadge /></div>}
 
-          <section className="mt-6 rounded-3xl border bg-card p-6">
+          <section className="resident-card mt-6 rounded-[1.7rem] border bg-card/90 p-5 sm:p-6">
             <StatusPill zone={zone} size="xl" />
             <div className="mt-6"><KeyNumber zone={zone} /></div>
             <div className="mt-5 pt-4 border-t border-dashed"><Freshness zone={zone} now={now} /></div>
           </section>
 
           {!isLive(zone) && (
-            <p className="mt-4 rounded-2xl bg-muted px-4 py-3 text-sm text-muted-foreground">
+            <p className="mt-4 rounded-2xl border border-foreground/10 bg-muted/70 px-4 py-3.5 text-sm leading-relaxed text-muted-foreground">
               {zone.is_demo ? "The demo schedule could not be refreshed. Reconnect to update it."
                 : zone.state === "offline"
                 ? "We are not showing old numbers as live. Check again once the camera is back."
@@ -64,19 +64,19 @@ export default function ZonePage() {
 
           {isLive(zone) && zone.units.length > 0 && (
             <section className="mt-6">
-              <h2 className="mb-2 font-mono text-[11px] uppercase tracking-widest text-muted-foreground">
+              <h2 className="mb-3 font-mono text-[10px] uppercase tracking-[.2em] text-muted-foreground">
                 {zone.type === "machines" ? "Machines" : "Units"}
               </h2>
               {zone.type === "machines" ? (
                 <MachineUnitGrid zone={zone} />
               ) : (
-                <ul className="divide-y rounded-3xl border bg-card">
+                <ul className="divide-y divide-foreground/10 rounded-[1.5rem] border bg-card/90">
                   {zone.units.map((u) => (
                     <li key={u.label} data-testid={"row-unit-" + u.label} className="px-4 py-4 sm:px-5">
                       <div className="flex items-center justify-between gap-3">
                         <span className="font-bold text-lg">{u.label}</span>
                         <span className="text-right">
-                          <span className="block font-semibold" style={{ color: "hsl(var(" + (u.state === "free" ? "--st-low" : u.state === "in_use" ? "--st-high" : "--st-grey") + "))" }}>
+                          <span className="block text-base font-bold" style={{ color: "hsl(var(" + (u.state === "free" ? "--st-low" : u.state === "in_use" ? "--st-high" : "--st-grey") + "))" }}>
                             {unitText(u)}{u.pending_state ? " (confirming)" : ""}
                           </span>
                           <span className="font-mono text-[11px] text-muted-foreground">
@@ -96,7 +96,7 @@ export default function ZonePage() {
             </section>
           )}
 
-          <p className="mt-8 flex items-start gap-2 text-xs text-muted-foreground">
+          <p className="mt-8 flex items-start gap-2 rounded-2xl border border-foreground/10 bg-card/50 p-4 text-xs leading-relaxed text-muted-foreground">
             <EyeOff className="h-4 w-4 shrink-0" />
             {zone.is_demo
               ? "This demo repeats a stored 24-hour schedule in India time. No camera or AI is used."
