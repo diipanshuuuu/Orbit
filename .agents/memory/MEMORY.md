@@ -1,0 +1,1 @@
+- [Gemini thinking compatibility](gemini-thinking.md) — the Replit Gemini proxy accepts gemini-3.8-flash with LOW but rejects MINIMAL; verify combinations with a real call.

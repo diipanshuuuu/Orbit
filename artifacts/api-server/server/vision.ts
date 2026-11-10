@@ -61,7 +61,7 @@ export async function analyzeFrame(image: string, zone: VisionZone): Promise<Vis
             } },
           },
         },
-        thinkingConfig: { thinkingLevel: ThinkingLevel.MINIMAL },
+        thinkingConfig: { thinkingLevel: ThinkingLevel.LOW },
         maxOutputTokens: 8192,
         // One SDK attempt per allowance token. Failure consumes the reserved token.
         httpOptions: { timeout: 25_000, retryOptions: { attempts: 1 } },
@@ -76,9 +76,17 @@ export async function analyzeFrame(image: string, zone: VisionZone): Promise<Vis
       }),
       raw,
     };
-  } catch {
-    // Never log the model error body: it can contain frame bytes or sensitive output.
-    logger.warn("Vision analysis failed; keeping status unconfirmed");
+  } catch (error: unknown) {
+    // Log only allowlisted metadata, never the error object, message, body or frame.
+    const metadata = error !== null && typeof error === "object"
+      ? error as { name?: unknown; status?: unknown; statusCode?: unknown }
+      : {};
+    const errorName = typeof metadata.name === "string" && /^[A-Za-z][A-Za-z0-9_]{0,63}$/.test(metadata.name)
+      ? metadata.name : "UnknownError";
+    const status = metadata.status ?? metadata.statusCode;
+    const statusCode = typeof status === "number" && Number.isInteger(status) && status >= 100 && status <= 599
+      ? status : null;
+    logger.warn({ errorName, statusCode }, "Vision analysis failed; keeping status unconfirmed");
     return { ok: false, scene_ok: false, people_count: null, units: zone.units.map((u) => unknownUnit(u.label)) };
   }
 }
