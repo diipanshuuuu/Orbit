@@ -50,6 +50,8 @@ describe("crowd and freshness", () => {
   it("prefers offline over re-checking", () => { expect(freshness(ago(301), ago(900), now)).toBe("offline"); });
   it("rechecks missing analysis", () => { expect(freshness(now, null, now)).toBe("re-checking"); });
   it("rechecks after five minutes", () => { expect(freshness(now, ago(300), now)).toBe("re-checking"); });
+  it("rechecks immediately when a resident flags the status", () => { expect(freshness(now, now, now, true)).toBe("re-checking"); });
+  it("still reports an offline camera before a requested recheck", () => { expect(freshness(ago(300), now, now, true)).toBe("offline"); });
   it("is live within the freshness window", () => { expect(freshness(ago(120), ago(299), now)).toBe("live"); });
 });
 describe("analysis allowance", () => {

@@ -82,6 +82,22 @@ paths:
                 required: [image]
                 properties:
                   image: { type: [string, "null"] }
+  /feedback:
+    post:
+      operationId: submitFeedback
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/FeedbackInput" }
+      responses:
+        "201":
+          description: Feedback saved
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/FeedbackSaved" }
+        "400": { description: Invalid feedback }
+        "404": { description: Zone or unit not found }
   /zones:
     get:
       operationId: getZones
@@ -170,7 +186,7 @@ components:
       allOf:
         - { $ref: "#/components/schemas/AdminZoneInput" }
         - type: object
-          required: [id, slug, cameras, readings]
+          required: [id, slug, cameras, readings, feedback_count, agreement_rate, feedback]
           properties:
             id: { type: integer }
             slug: { type: string }
@@ -180,6 +196,35 @@ components:
             readings:
               type: array
               items: { $ref: "#/components/schemas/AdminReading" }
+            feedback_count: { type: integer }
+            agreement_rate: { type: [number, "null"], minimum: 0, maximum: 1 }
+            feedback:
+              type: array
+              items: { $ref: "#/components/schemas/AdminFeedback" }
+    AdminFeedback:
+      type: object
+      required: [id, unit_label, vote, status_shown, created_at, device_id]
+      properties:
+        id: { type: integer }
+        unit_label: { type: [string, "null"] }
+        vote: { type: string, enum: [up, down] }
+        status_shown: { type: string, enum: [low, medium, high, unknown, offline, re-checking, free, in_use] }
+        created_at: { type: string, format: date-time }
+        device_id: { type: string, format: uuid }
+    FeedbackInput:
+      type: object
+      required: [zone_slug, unit_label, vote, status_shown, device_id]
+      properties:
+        zone_slug: { type: string, minLength: 1, maxLength: 160 }
+        unit_label: { type: [string, "null"], minLength: 1, maxLength: 100 }
+        vote: { type: string, enum: [up, down] }
+        status_shown: { type: string, enum: [low, medium, high, unknown, offline, re-checking, free, in_use] }
+        device_id: { type: string, format: uuid }
+    FeedbackSaved:
+      type: object
+      required: [id]
+      properties:
+        id: { type: integer }
     AdminDashboard:
       type: object
       required: [day, zones]

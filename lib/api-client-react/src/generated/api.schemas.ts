@@ -80,12 +80,95 @@ export interface AdminReading {
   raw: AdminReadingRaw;
 }
 
-export type AdminZone = AdminZoneInput & {
+export type AdminFeedbackVote = typeof AdminFeedbackVote[keyof typeof AdminFeedbackVote];
+
+
+export const AdminFeedbackVote = {
+  up: 'up',
+  down: 'down',
+} as const;
+
+export type AdminFeedbackStatusShown = typeof AdminFeedbackStatusShown[keyof typeof AdminFeedbackStatusShown];
+
+
+export const AdminFeedbackStatusShown = {
+  low: 'low',
+  medium: 'medium',
+  high: 'high',
+  unknown: 'unknown',
+  offline: 'offline',
+  're-checking': 're-checking',
+  free: 'free',
+  in_use: 'in_use',
+} as const;
+
+export interface AdminFeedback {
+  id: number;
+  /** @nullable */
+  unit_label: string | null;
+  vote: AdminFeedbackVote;
+  status_shown: AdminFeedbackStatusShown;
+  created_at: string;
+  device_id: string;
+}
+
+export type AdminZone = AdminZoneInput & ({
   id: number;
   slug: string;
   cameras: AdminCamera[];
   readings: AdminReading[];
-};
+  feedback_count: number;
+  /**
+     * @minimum 0
+     * @maximum 1
+     * @nullable
+     */
+  agreement_rate: number | null;
+  feedback: AdminFeedback[];
+});
+
+export type FeedbackInputVote = typeof FeedbackInputVote[keyof typeof FeedbackInputVote];
+
+
+export const FeedbackInputVote = {
+  up: 'up',
+  down: 'down',
+} as const;
+
+export type FeedbackInputStatusShown = typeof FeedbackInputStatusShown[keyof typeof FeedbackInputStatusShown];
+
+
+export const FeedbackInputStatusShown = {
+  low: 'low',
+  medium: 'medium',
+  high: 'high',
+  unknown: 'unknown',
+  offline: 'offline',
+  're-checking': 're-checking',
+  free: 'free',
+  in_use: 'in_use',
+} as const;
+
+export interface FeedbackInput {
+  /**
+     * @minLength 1
+     * @maxLength 160
+     */
+  zone_slug: string;
+  /**
+     * @minLength 1
+     * @maxLength 100
+     * @nullable
+     */
+  unit_label: string | null;
+  vote: FeedbackInputVote;
+  status_shown: FeedbackInputStatusShown;
+  device_id: string;
+}
+
+export interface FeedbackSaved {
+  id: number;
+}
 
 export interface AdminDashboard {
   /** UTC calendar day; counters start when admin support is installed */

@@ -1,6 +1,6 @@
 import { randomBytes } from "node:crypto";
-import { db, zones, units, cameras, cameraDaily, readings, zoneStatuses, unitStatuses } from "@workspace/db";
-import { and, desc, eq } from "drizzle-orm";
+import { db, zones, units, cameras, cameraDaily, readings, zoneStatuses, unitStatuses, feedback } from "@workspace/db";
+import { and, desc, eq, sql } from "drizzle-orm";
 import type { z } from "zod";
 import { adminZoneInput, utcCounterDay } from "./admin-validation";
 import { MAX_AI_CALLS_PER_DAY } from "./config";
@@ -19,6 +19,14 @@ export async function adminDashboard() {
         .where(eq(cameras.zoneId, zone.id)).orderBy(cameras.id);
       const recent = await tx.select().from(readings).where(eq(readings.zoneId, zone.id))
         .orderBy(desc(readings.capturedAt), desc(readings.id)).limit(20);
+      const [feedbackSummary] = await tx.select({
+        count: sql<number>`count(*)::int`,
+        upCount: sql<number>`count(*) filter (where ${feedback.vote} = 'up')::int`,
+      }).from(feedback).where(eq(feedback.zoneId, zone.id));
+      const recentFeedback = await tx.select({ entry: feedback, unitLabel: units.label }).from(feedback)
+        .leftJoin(units, eq(units.id, feedback.unitId))
+        .where(eq(feedback.zoneId, zone.id))
+        .orderBy(desc(feedback.createdAt), desc(feedback.id)).limit(20);
       return {
         id: zone.id, slug: zone.slug, name: zone.name, type: zone.type, layout_hint: zone.layoutHint,
         low_max: zone.lowMax, high_min: zone.highMin, typical_cycle_min: zone.typicalCycleMin,
@@ -30,6 +38,12 @@ export async function adminDashboard() {
           allowance_left: refillAllowance(camera.allowance, camera.allowanceAt, now, MAX_AI_CALLS_PER_DAY),
         })),
         readings: recent.map((row) => ({ id: row.id, captured_at: row.capturedAt.toISOString(), raw: row.raw })),
+        feedback_count: feedbackSummary?.count ?? 0,
+        agreement_rate: feedbackSummary?.count ? feedbackSummary.upCount / feedbackSummary.count : null,
+        feedback: recentFeedback.map(({ entry, unitLabel }) => ({
+          id: entry.id, unit_label: unitLabel, vote: entry.vote, status_shown: entry.statusShown,
+          created_at: entry.createdAt.toISOString(), device_id: entry.deviceId,
+        })),
       };
     })) };
   }, { isolationLevel: "repeatable read", accessMode: "read only" });

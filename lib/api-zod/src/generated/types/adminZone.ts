@@ -6,12 +6,21 @@
  * OpenAPI spec version: 0.1.0
  */
 import type { AdminCamera } from './adminCamera';
+import type { AdminFeedback } from './adminFeedback';
 import type { AdminReading } from './adminReading';
 import type { AdminZoneInput } from './adminZoneInput';
 
-export type AdminZone = AdminZoneInput & {
+export type AdminZone = AdminZoneInput & ({
   id: number;
   slug: string;
   cameras: AdminCamera[];
   readings: AdminReading[];
-};
+  feedback_count: number;
+  /**
+     * @minimum 0
+     * @maximum 1
+     * @nullable
+     */
+  agreement_rate: number | null;
+  feedback: AdminFeedback[];
+});

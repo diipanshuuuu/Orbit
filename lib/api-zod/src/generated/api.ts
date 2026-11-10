@@ -25,6 +25,9 @@ export const getAdminDashboardResponseZonesItemOneUnitsItemMax = 100;
 
 export const getAdminDashboardResponseZonesItemOneUnitsMax = 100;
 
+export const getAdminDashboardResponseZonesItemTwoAgreementRateMin = 0;
+export const getAdminDashboardResponseZonesItemTwoAgreementRateMax = 1;
+
 
 
 export const GetAdminDashboardResponse = zod.object({
@@ -56,6 +59,16 @@ export const GetAdminDashboardResponse = zod.object({
   "id": zod.number().int(),
   "captured_at": zod.string(),
   "raw": zod.record(zod.string(), zod.unknown())
+})),
+  "feedback_count": zod.number().int(),
+  "agreement_rate": zod.number().min(getAdminDashboardResponseZonesItemTwoAgreementRateMin).max(getAdminDashboardResponseZonesItemTwoAgreementRateMax).nullable(),
+  "feedback": zod.array(zod.object({
+  "id": zod.number().int(),
+  "unit_label": zod.string().nullable(),
+  "vote": zod.enum(['up', 'down']),
+  "status_shown": zod.enum(['low', 'medium', 'high', 'unknown', 'offline', 're-checking', 'free', 'in_use']),
+  "created_at": zod.coerce.date(),
+  "device_id": zod.string().uuid()
 }))
 })))
 })
@@ -161,6 +174,25 @@ export const GetAdminCameraFrameParams = zod.object({
 
 export const GetAdminCameraFrameResponse = zod.object({
   "image": zod.string().nullable()
+})
+
+
+export const submitFeedbackBodyZoneSlugMax = 160;
+
+export const submitFeedbackBodyUnitLabelMax = 100;
+
+
+
+export const SubmitFeedbackBody = zod.object({
+  "zone_slug": zod.string().min(1).max(submitFeedbackBodyZoneSlugMax),
+  "unit_label": zod.string().min(1).max(submitFeedbackBodyUnitLabelMax).nullable(),
+  "vote": zod.enum(['up', 'down']),
+  "status_shown": zod.enum(['low', 'medium', 'high', 'unknown', 'offline', 're-checking', 'free', 'in_use']),
+  "device_id": zod.string().uuid()
+})
+
+export const SubmitFeedbackResponse = zod.object({
+  "id": zod.number().int()
 })
 
 

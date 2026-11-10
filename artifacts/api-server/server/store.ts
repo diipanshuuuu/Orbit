@@ -19,7 +19,7 @@ export async function publicZone(store: Store, zone: ZoneRow, now: Date) {
   const [status] = await store.select().from(zoneStatuses).where(eq(zoneStatuses.zoneId, zone.id));
   const unitRows = await store.select({ unit: units, status: unitStatuses }).from(units)
     .leftJoin(unitStatuses, eq(unitStatuses.unitId, units.id)).where(eq(units.zoneId, zone.id));
-  const health = freshness(lastSeenAt, zone.checkedAt, now);
+  const health = freshness(lastSeenAt, zone.checkedAt, now, zone.forceRecheck);
   return {
     slug: zone.slug, name: zone.name, type: zone.type,
     state: health === "live" ? status?.state ?? "unknown" : health,
@@ -60,7 +60,7 @@ export async function ingest(input: IngestInput) {
     const zoneUnits = await tx.select().from(units).where(eq(units.zoneId, zone.id));
     const statusRows = await tx.select({ status: unitStatuses }).from(unitStatuses)
       .innerJoin(units, eq(unitStatuses.unitId, units.id)).where(eq(units.zoneId, zone.id));
-    const pending = zone.checkedAt === null || statusRows.some(({ status }) => status.pendingState !== null);
+    const pending = zone.forceRecheck || zone.checkedAt === null || statusRows.some(({ status }) => status.pendingState !== null);
     const analyse = shouldAnalyse({
       changed: input.changed, pending, allowance, now,
       lastAnalysedAt: camera.lastAnalysedAt, lastAttemptedAt: camera.lastAttemptedAt,
@@ -102,8 +102,9 @@ export async function ingest(input: IngestInput) {
             .onConflictDoUpdate({ target: unitStatuses.unitId, set: next });
         }
         await tx.update(cameras).set({ lastAnalysedAt: now }).where(eq(cameras.id, camera.id));
-        await tx.update(zones).set({ checkedAt: now }).where(eq(zones.id, zone.id));
+        await tx.update(zones).set({ checkedAt: now, forceRecheck: false }).where(eq(zones.id, zone.id));
         zone.checkedAt = now;
+        zone.forceRecheck = false;
       }
     }
     await tx.insert(cameraDaily).values({
@@ -116,6 +117,10 @@ export async function ingest(input: IngestInput) {
     // Freshness masking in publicZone must not suppress a pending-unit recheck.
     const pendingRows = await tx.select({ pendingState: unitStatuses.pendingState }).from(unitStatuses)
       .innerJoin(units, eq(unitStatuses.unitId, units.id)).where(eq(units.zoneId, zone.id));
-    return { analysed, status, recheck: pendingRows.some((u) => u.pendingState !== null), last_analysed_at: iso(lastAnalysedAt) };
+    return {
+      analysed, status,
+      recheck: zone.forceRecheck || pendingRows.some((u) => u.pendingState !== null),
+      last_analysed_at: iso(lastAnalysedAt),
+    };
   });
 }

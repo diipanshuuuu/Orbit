@@ -1,4 +1,4 @@
-import { pgTable, serial, text, integer, boolean, timestamp, doublePrecision, jsonb, uniqueIndex, date } from "drizzle-orm/pg-core";
+import { pgTable, serial, text, integer, boolean, timestamp, doublePrecision, jsonb, uniqueIndex, date, index } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 
 const instant = (name: string) => timestamp(name, { withTimezone: true });
@@ -15,6 +15,7 @@ export const zones = pgTable("zones", {
   checkedAt: instant("checked_at"),
   activeStart: text("active_start"),
   activeEnd: text("active_end"),
+  forceRecheck: boolean("force_recheck").notNull().default(false),
 });
 export const units = pgTable("units", {
   id: serial("id").primaryKey(),
@@ -40,6 +41,15 @@ export const readings = pgTable("readings", {
   raw: jsonb("raw_model_json").notNull(),
   peopleCount: integer("people_count"),
 });
+export const feedback = pgTable("feedback", {
+  id: serial("id").primaryKey(),
+  zoneId: integer("zone").notNull().references(() => zones.id, { onDelete: "cascade" }),
+  unitId: integer("unit").references(() => units.id, { onDelete: "set null" }),
+  vote: text("vote", { enum: ["up", "down"] }).notNull(),
+  statusShown: text("status_shown", { enum: ["low", "medium", "high", "unknown", "offline", "re-checking", "free", "in_use"] }).notNull(),
+  createdAt: instant("created_at").notNull().defaultNow(),
+  deviceId: text("device_id").notNull(),
+}, (t) => [index("feedback_zone_created_at").on(t.zoneId, t.createdAt)]);
 export const cameraDaily = pgTable("camera_daily", {
   id: serial("id").primaryKey(),
   cameraId: integer("camera").notNull().references(() => cameras.id, { onDelete: "cascade" }),

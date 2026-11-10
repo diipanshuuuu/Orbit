@@ -41,8 +41,9 @@ export function crowdLevel(peopleCount: number | null, lowMax: number, highMin: 
   if (peopleCount === null) return "unknown";
   return peopleCount <= lowMax ? "low" : peopleCount >= highMin ? "high" : "medium";
 }
-export function freshness(lastSeenAt: Date | null, checkedAt: Date | null, now: Date): "live" | "offline" | "re-checking" {
+export function freshness(lastSeenAt: Date | null, checkedAt: Date | null, now: Date, forceRecheck = false): "live" | "offline" | "re-checking" {
   if (!lastSeenAt || now.getTime() - lastSeenAt.getTime() >= 5 * MINUTE) return "offline";
+  if (forceRecheck) return "re-checking";
   if (!checkedAt || now.getTime() - checkedAt.getTime() >= 5 * MINUTE) return "re-checking";
   return "live";
 }

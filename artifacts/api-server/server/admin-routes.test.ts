@@ -56,6 +56,11 @@ describe("all private admin routes", () => {
         id: 1, path: "/cam/test-token-not-a-real-camera", last_seen_at: null,
         last_analysed_at: null, has_frame: true, frames_received: 10, analysed: 2, allowance_left: 49.5,
       }], readings: [{ id: 1, captured_at: "2026-11-11T00:00:00.000Z", raw: { scene_ok: true, people_count: 2, units: [] } }],
+      feedback_count: 1, agreement_rate: 1,
+      feedback: [{
+        id: 4, unit_label: null, vote: "up", status_shown: "low",
+        created_at: "2026-11-11T00:00:00.000Z", device_id: "550e8400-e29b-41d4-a716-446655440000",
+      }],
     }] };
     store.adminDashboard.mockResolvedValue(data);
     const response = await fetch(url + "/admin", { headers });

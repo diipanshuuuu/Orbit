@@ -5,6 +5,7 @@ import type { AdminZone, AdminZoneInput } from "@workspace/api-client-react";
 import { ZoneForm } from "./zone-form";
 import { CameraCard } from "./camera-card";
 import { ReadingsList } from "./readings-list";
+import { FeedbackList } from "./feedback-list";
 import { useAdminMutations } from "@/hooks/use-admin";
 import { errorMessage, errorStatus } from "@/lib/admin-auth";
 import { useToast } from "@/hooks/use-toast";
@@ -69,6 +70,7 @@ export function ZonePanel({ zone, passcode, onUnauthorized }: { zone: AdminZone;
           {createCamera.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />} {createCamera.isPending ? "Creating" : "Create camera"}
         </button>
         <ReadingsList readings={zone.readings} zoneId={zone.id} />
+        <FeedbackList feedback={zone.feedback} count={zone.feedback_count} agreementRate={zone.agreement_rate} zoneId={zone.id} />
       </div>
     </section>
   );
