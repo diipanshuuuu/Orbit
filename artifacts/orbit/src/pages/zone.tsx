@@ -5,6 +5,7 @@ import { useNow, ago } from "@/lib/time";
 import { Shell } from "@/components/shell";
 import { DemoBadge, StatusPill, KeyNumber, Freshness, isLive, unitText } from "@/components/zone-status";
 import { FeedbackRow } from "@/components/feedback-row";
+import { MachineUnitGrid } from "@/components/machine-unit-grid";
 
 export default function ZonePage() {
   const { slug } = useParams<{ slug: string }>();
@@ -63,29 +64,35 @@ export default function ZonePage() {
 
           {isLive(zone) && zone.units.length > 0 && (
             <section className="mt-6">
-              <h2 className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground mb-2">Units</h2>
-              <ul className="divide-y rounded-3xl border bg-card">
-                {zone.units.map((u) => (
-                  <li key={u.label} data-testid={"row-unit-" + u.label} className="px-4 py-4 sm:px-5">
-                    <div className="flex items-center justify-between gap-3">
-                      <span className="font-bold text-lg">{u.label}</span>
-                      <span className="text-right">
-                        <span className="block font-semibold" style={{ color: "hsl(var(" + (u.state === "free" ? "--st-low" : u.state === "in_use" ? "--st-high" : "--st-grey") + "))" }}>
-                          {unitText(u)}{u.pending_state ? " (confirming)" : ""}
+              <h2 className="mb-2 font-mono text-[11px] uppercase tracking-widest text-muted-foreground">
+                {zone.type === "machines" ? "Machines" : "Units"}
+              </h2>
+              {zone.type === "machines" ? (
+                <MachineUnitGrid zone={zone} />
+              ) : (
+                <ul className="divide-y rounded-3xl border bg-card">
+                  {zone.units.map((u) => (
+                    <li key={u.label} data-testid={"row-unit-" + u.label} className="px-4 py-4 sm:px-5">
+                      <div className="flex items-center justify-between gap-3">
+                        <span className="font-bold text-lg">{u.label}</span>
+                        <span className="text-right">
+                          <span className="block font-semibold" style={{ color: "hsl(var(" + (u.state === "free" ? "--st-low" : u.state === "in_use" ? "--st-high" : "--st-grey") + "))" }}>
+                            {unitText(u)}{u.pending_state ? " (confirming)" : ""}
+                          </span>
+                          <span className="font-mono text-[11px] text-muted-foreground">
+                            {u.state === "in_use" && u.minutes_left != null
+                              ? "~" + u.minutes_left + " min left, " + (u.time_source === "display" ? "read from display" : "estimated")
+                              : u.since ? "since " + ago(u.since, now) : ""}
+                          </span>
                         </span>
-                        <span className="font-mono text-[11px] text-muted-foreground">
-                          {u.state === "in_use" && u.minutes_left != null
-                            ? "~" + u.minutes_left + " min left, " + (u.time_source === "display" ? "read from display" : "estimated")
-                            : u.since ? "since " + ago(u.since, now) : ""}
-                        </span>
-                      </span>
-                    </div>
-                    <div className="mt-3">
-                      <FeedbackRow zoneSlug={zone.slug} unitLabel={u.label} status={u.state} isDemo={zone.is_demo} />
-                    </div>
-                  </li>
-                ))}
-              </ul>
+                      </div>
+                      <div className="mt-3">
+                        <FeedbackRow zoneSlug={zone.slug} unitLabel={u.label} status={u.state} isDemo={zone.is_demo} />
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </section>
           )}
 
