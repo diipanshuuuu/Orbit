@@ -170,6 +170,62 @@ export interface FeedbackSaved {
   id: number;
 }
 
+export type UsageEventInputEventType = typeof UsageEventInputEventType[keyof typeof UsageEventInputEventType];
+
+
+export const UsageEventInputEventType = {
+  page_view: 'page_view',
+  button_tap: 'button_tap',
+} as const;
+
+export interface UsageEventInput {
+  device_id: string;
+  event_type: UsageEventInputEventType;
+  /** @pattern ^(\/|\/z\/[A-Za-z0-9-]+)$ */
+  path: string;
+  /**
+     * @maxLength 128
+     * @nullable
+     */
+  source: string | null;
+  /**
+     * @maxLength 120
+     * @nullable
+     */
+  action: string | null;
+}
+
+export interface UsageEventSaved {
+  id: number;
+}
+
+export interface AdminDailyUsage {
+  day: string;
+  unique_devices: number;
+  views: number;
+}
+
+export interface AdminSourceUsage {
+  /** @nullable */
+  source: string | null;
+  views: number;
+}
+
+export interface AdminTraction {
+  range_start: string;
+  range_end: string;
+  total_views: number;
+  feedback_count: number;
+  /**
+     * @minimum 0
+     * @maximum 1
+     * @nullable
+     */
+  thumbs_up_rate: number | null;
+  daily: AdminDailyUsage[];
+  sources: AdminSourceUsage[];
+}
+
 export interface AdminDashboard {
   /** UTC calendar day; counters start when admin support is installed */
   day: string;

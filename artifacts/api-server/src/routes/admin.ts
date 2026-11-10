@@ -1,15 +1,20 @@
 import { Router, type IRouter } from "express";
-import { GetAdminDashboardResponse, CreateAdminZoneResponse, UpdateAdminZoneResponse, CreateAdminCameraResponse, GetAdminCameraFrameResponse } from "@workspace/api-zod";
+import { GetAdminDashboardResponse, GetAdminTractionResponse, CreateAdminZoneResponse, UpdateAdminZoneResponse, CreateAdminCameraResponse, GetAdminCameraFrameResponse } from "@workspace/api-zod";
 import { z } from "zod";
 import { requireAdmin } from "../../server/admin-auth";
 import { adminZoneInput } from "../../server/admin-validation";
 import { adminDashboard, createCamera, latestAdminFrame, saveAdminZone } from "../../server/admin-store";
+import { getAdminTraction } from "../../server/usage-store";
 
 const router: IRouter = Router();
 router.use("/admin", requireAdmin);
 const idSchema = z.coerce.number().int().positive();
 router.get("/admin", async (_req, res): Promise<void> => {
   res.json(GetAdminDashboardResponse.parse(await adminDashboard()));
+});
+router.get("/admin/traction", async (_req, res): Promise<void> => {
+  res.setHeader("Cache-Control", "no-store");
+  res.json(GetAdminTractionResponse.parse(await getAdminTraction()));
 });
 router.post("/admin/zones", async (req, res): Promise<void> => {
   const parsed = adminZoneInput.safeParse(req.body);

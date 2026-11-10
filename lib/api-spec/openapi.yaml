@@ -22,6 +22,17 @@ paths:
             application/json:
               schema: { $ref: "#/components/schemas/AdminDashboard" }
         "401": { description: Invalid passcode }
+  /admin/traction:
+    get:
+      operationId: getAdminTraction
+      security: [{ AdminPasscode: [] }]
+      responses:
+        "200":
+          description: Private usage and feedback metrics
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AdminTraction" }
+        "401": { description: Invalid passcode }
   /admin/zones:
     post:
       operationId: createAdminZone
@@ -98,6 +109,21 @@ paths:
               schema: { $ref: "#/components/schemas/FeedbackSaved" }
         "400": { description: Invalid feedback }
         "404": { description: Zone or unit not found }
+  /events:
+    post:
+      operationId: logUsageEvent
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/UsageEventInput" }
+      responses:
+        "201":
+          description: Event saved
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/UsageEventSaved" }
+        "400": { description: Invalid event }
   /zones:
     get:
       operationId: getZones
@@ -225,6 +251,48 @@ components:
       required: [id]
       properties:
         id: { type: integer }
+    UsageEventInput:
+      type: object
+      required: [device_id, event_type, path, source, action]
+      properties:
+        device_id: { type: string, format: uuid }
+        event_type: { type: string, enum: [page_view, button_tap] }
+        path: { type: string, pattern: "^(\\/|\\/z\\/[A-Za-z0-9-]+)$" }
+        source: { type: [string, "null"], maxLength: 128 }
+        action: { type: [string, "null"], maxLength: 120 }
+    UsageEventSaved:
+      type: object
+      required: [id]
+      properties:
+        id: { type: integer }
+    AdminDailyUsage:
+      type: object
+      required: [day, unique_devices, views]
+      properties:
+        day: { type: string }
+        unique_devices: { type: integer }
+        views: { type: integer }
+    AdminSourceUsage:
+      type: object
+      required: [source, views]
+      properties:
+        source: { type: [string, "null"] }
+        views: { type: integer }
+    AdminTraction:
+      type: object
+      required: [range_start, range_end, total_views, feedback_count, thumbs_up_rate, daily, sources]
+      properties:
+        range_start: { type: string }
+        range_end: { type: string }
+        total_views: { type: integer }
+        feedback_count: { type: integer }
+        thumbs_up_rate: { type: [number, "null"], minimum: 0, maximum: 1 }
+        daily:
+          type: array
+          items: { $ref: "#/components/schemas/AdminDailyUsage" }
+        sources:
+          type: array
+          items: { $ref: "#/components/schemas/AdminSourceUsage" }
     AdminDashboard:
       type: object
       required: [day, zones]

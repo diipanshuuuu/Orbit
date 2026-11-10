@@ -6,9 +6,11 @@ import { Shell } from "@/components/shell";
 import { PasscodeGate } from "@/components/admin/passcode-gate";
 import { ZoneForm, emptyZone } from "@/components/admin/zone-form";
 import { ZonePanel } from "@/components/admin/zone-panel";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAdminDashboard, useAdminMutations } from "@/hooks/use-admin";
 import { errorMessage, errorStatus, forgetPasscode, readPasscode, rememberPasscode } from "@/lib/admin-auth";
 import { useToast } from "@/hooks/use-toast";
+import { TractionView } from "@/components/admin/traction-view";
 
 function useAdminHead() {
   useEffect(() => {
@@ -64,14 +66,23 @@ function Dashboard({ passcode, onUnauthorized, onConfigError }: { passcode: stri
   const data = q.data;
   if (!data) return null;
   return (
-    <div className="mt-4 space-y-4">
-      <p className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground" data-testid="text-day">
-        Counters for {data.day} (UTC). Tracking started when admin was installed.
-      </p>
-      <NewZone passcode={passcode} onUnauthorized={onUnauthorized} />
-      {data.zones.length === 0 && <p className="rounded-3xl border border-dashed p-8 text-center text-sm text-muted-foreground">No zones yet. Create the first one above.</p>}
-      {data.zones.map((z) => <ZonePanel key={z.id} zone={z} passcode={passcode} onUnauthorized={onUnauthorized} />)}
-    </div>
+    <Tabs defaultValue="zones" className="mt-5" data-testid="admin-tabs">
+      <TabsList className="grid h-11 w-full grid-cols-2 rounded-full">
+        <TabsTrigger value="zones" data-testid="tab-zones" className="rounded-full">Zones</TabsTrigger>
+        <TabsTrigger value="traction" data-testid="tab-traction" className="rounded-full">Traction</TabsTrigger>
+      </TabsList>
+      <TabsContent value="zones" className="space-y-4">
+        <p className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground" data-testid="text-day">
+          Counters for {data.day} (UTC). Tracking started when admin was installed.
+        </p>
+        <NewZone passcode={passcode} onUnauthorized={onUnauthorized} />
+        {data.zones.length === 0 && <p className="rounded-3xl border border-dashed p-8 text-center text-sm text-muted-foreground">No zones yet. Create the first one above.</p>}
+        {data.zones.map((z) => <ZonePanel key={z.id} zone={z} passcode={passcode} onUnauthorized={onUnauthorized} />)}
+      </TabsContent>
+      <TabsContent value="traction">
+        <TractionView passcode={passcode} onUnauthorized={onUnauthorized} />
+      </TabsContent>
+    </Tabs>
   );
 }
 

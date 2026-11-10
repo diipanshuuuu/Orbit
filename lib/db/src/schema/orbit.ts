@@ -50,6 +50,19 @@ export const feedback = pgTable("feedback", {
   createdAt: instant("created_at").notNull().defaultNow(),
   deviceId: text("device_id").notNull(),
 }, (t) => [index("feedback_zone_created_at").on(t.zoneId, t.createdAt)]);
+export const events = pgTable("events", {
+  id: serial("id").primaryKey(),
+  deviceId: text("device_id").notNull(),
+  eventType: text("event_type", { enum: ["page_view", "button_tap"] }).notNull(),
+  path: text("path").notNull(),
+  source: text("source"),
+  action: text("action"),
+  createdAt: instant("created_at").notNull().defaultNow(),
+}, (t) => [
+  index("events_type_created_at").on(t.eventType, t.createdAt),
+  index("events_source").on(t.source),
+  index("events_device_created_at").on(t.deviceId, t.createdAt),
+]);
 export const cameraDaily = pgTable("camera_daily", {
   id: serial("id").primaryKey(),
   cameraId: integer("camera").notNull().references(() => cameras.id, { onDelete: "cascade" }),

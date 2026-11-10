@@ -8,6 +8,7 @@ import Home from '@/pages/home';
 import ZonePage from '@/pages/zone';
 import CameraPage from '@/pages/camera';
 import AdminPage from '@/pages/admin';
+import { UsageTracker } from '@/components/usage-tracker';
 import {
   Route,
   Switch,
@@ -43,6 +44,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, '')}>
+          <UsageTracker />
           <Router />
         </WouterRouter>
         <Toaster />

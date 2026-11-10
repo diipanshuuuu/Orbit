@@ -74,6 +74,29 @@ export const GetAdminDashboardResponse = zod.object({
 })
 
 
+export const getAdminTractionResponseThumbsUpRateMin = 0;
+export const getAdminTractionResponseThumbsUpRateMax = 1;
+
+
+
+export const GetAdminTractionResponse = zod.object({
+  "range_start": zod.string(),
+  "range_end": zod.string(),
+  "total_views": zod.number().int(),
+  "feedback_count": zod.number().int(),
+  "thumbs_up_rate": zod.number().min(getAdminTractionResponseThumbsUpRateMin).max(getAdminTractionResponseThumbsUpRateMax).nullable(),
+  "daily": zod.array(zod.object({
+  "day": zod.string(),
+  "unique_devices": zod.number().int(),
+  "views": zod.number().int()
+})),
+  "sources": zod.array(zod.object({
+  "source": zod.string().nullable(),
+  "views": zod.number().int()
+}))
+})
+
+
 export const createAdminZoneBodyNameMax = 120;
 
 export const createAdminZoneBodyLayoutHintMax = 2000;
@@ -192,6 +215,26 @@ export const SubmitFeedbackBody = zod.object({
 })
 
 export const SubmitFeedbackResponse = zod.object({
+  "id": zod.number().int()
+})
+
+
+export const logUsageEventBodyPathRegExp = new RegExp('^(\\/|\\/z\\/[A-Za-z0-9-]+)$');
+export const logUsageEventBodySourceMax = 128;
+
+export const logUsageEventBodyActionMax = 120;
+
+
+
+export const LogUsageEventBody = zod.object({
+  "device_id": zod.string().uuid(),
+  "event_type": zod.enum(['page_view', 'button_tap']),
+  "path": zod.string().regex(logUsageEventBodyPathRegExp),
+  "source": zod.string().max(logUsageEventBodySourceMax).nullable(),
+  "action": zod.string().max(logUsageEventBodyActionMax).nullable()
+})
+
+export const LogUsageEventResponse = zod.object({
   "id": zod.number().int()
 })
 

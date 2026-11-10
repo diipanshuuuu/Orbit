@@ -5,7 +5,9 @@ import type { Server } from "node:http";
 const store = vi.hoisted(() => ({
   adminDashboard: vi.fn(), saveAdminZone: vi.fn(), createCamera: vi.fn(), latestAdminFrame: vi.fn(),
 }));
+const tractionDashboard = vi.hoisted(() => vi.fn());
 vi.mock("./admin-store", () => store);
+vi.mock("./usage-store", () => ({ getAdminTraction: tractionDashboard }));
 import adminRouter from "../src/routes/admin";
 
 let server: Server;
@@ -25,6 +27,7 @@ afterAll(async () => { await new Promise<void>((resolve) => server.close(() => r
 beforeEach(() => {
   vi.stubEnv("ADMIN_PASSCODE", "unit-test-passcode");
   Object.values(store).forEach((mock) => mock.mockReset());
+  tractionDashboard.mockReset();
 });
 afterEach(() => vi.unstubAllEnvs());
 const headers = { Authorization: "Bearer unit-test-passcode", "Content-Type": "application/json" };
@@ -36,12 +39,13 @@ const input = {
 describe("all private admin routes", () => {
   it.each([
     ["GET", "/admin"], ["POST", "/admin/zones"], ["PUT", "/admin/zones/1"],
-    ["POST", "/admin/zones/1/cameras"], ["GET", "/admin/cameras/1/frame"],
+    ["POST", "/admin/zones/1/cameras"], ["GET", "/admin/cameras/1/frame"], ["GET", "/admin/traction"],
   ])("rejects unauthenticated %s %s before querying private data", async (method, path) => {
     const response = await fetch(url + path, { method });
     expect(response.status).toBe(401);
     expect(response.headers.get("cache-control")).toBe("no-store");
     Object.values(store).forEach((mock) => expect(mock).not.toHaveBeenCalled());
+    expect(tractionDashboard).not.toHaveBeenCalled();
     expect(await response.text()).not.toContain("unit-test-passcode");
   });
   it("fails closed if the passcode is unconfigured", async () => {
@@ -65,6 +69,18 @@ describe("all private admin routes", () => {
     store.adminDashboard.mockResolvedValue(data);
     const response = await fetch(url + "/admin", { headers });
     expect(response.status).toBe(200);
+    expect(await response.json()).toEqual(data);
+  });
+  it("returns protected traction metrics", async () => {
+    const data = {
+      range_start: "2026-10-13", range_end: "2026-11-11", total_views: 18, feedback_count: 4,
+      thumbs_up_rate: 0.75, daily: [{ day: "2026-11-11", unique_devices: 2, views: 5 }],
+      sources: [{ source: "lobby-qr", views: 5 }, { source: null, views: 13 }],
+    };
+    tractionDashboard.mockResolvedValue(data);
+    const response = await fetch(url + "/admin/traction", { headers });
+    expect(response.status).toBe(200);
+    expect(response.headers.get("cache-control")).toBe("no-store");
     expect(await response.json()).toEqual(data);
   });
   it("creates and updates validated zones", async () => {

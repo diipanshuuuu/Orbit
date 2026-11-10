@@ -7,6 +7,7 @@
  */
 
 export * from './adminCamera';
+export * from './adminDailyUsage';
 export * from './adminDashboard';
 export * from './adminFeedback';
 export * from './adminFeedbackStatusShown';
@@ -14,6 +15,8 @@ export * from './adminFeedbackVote';
 export * from './adminReading';
 export * from './adminReadingRaw';
 export * from './adminSaved';
+export * from './adminSourceUsage';
+export * from './adminTraction';
 export * from './adminZone';
 export * from './adminZoneInput';
 export * from './adminZoneInputType';
@@ -28,6 +31,9 @@ export * from './ingestReply';
 export * from './unitStatus';
 export * from './unitStatusState';
 export * from './unitStatusTimeSource';
+export * from './usageEventInput';
+export * from './usageEventInputEventType';
+export * from './usageEventSaved';
 export * from './zone';
 export * from './zoneState';
 export * from './zoneType';
