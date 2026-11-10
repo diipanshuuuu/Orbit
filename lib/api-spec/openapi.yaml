@@ -11,6 +11,33 @@ tags:
   - name: health
     description: Health operations
 paths:
+  /zones:
+    get:
+      operationId: getZones
+      responses:
+        "200":
+          description: Public statuses, without images or camera tokens
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/Zone" }
+  /ingest:
+    post:
+      operationId: ingestFrame
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/IngestInput" }
+      responses:
+        "200":
+          description: Camera acknowledgement
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/IngestReply" }
+        "401":
+          description: Invalid camera token
   /healthz:
     get:
       operationId: healthCheck
@@ -26,6 +53,46 @@ paths:
                 $ref: "#/components/schemas/HealthStatus"
 components:
   schemas:
+    Zone:
+      type: object
+      required: [slug, name, type, state, people_count, checked_at, last_seen_at, units]
+      properties:
+        slug: { type: string }
+        name: { type: string }
+        type: { type: string, enum: [crowd, machines] }
+        state: { type: string, enum: [low, medium, high, unknown, offline, re-checking] }
+        people_count: { type: [integer, "null"] }
+        checked_at: { type: [string, "null"] }
+        last_seen_at: { type: [string, "null"] }
+        units:
+          type: array
+          items: { $ref: "#/components/schemas/UnitStatus" }
+    UnitStatus:
+      type: object
+      required: [label, state, pending_state, since, updated_at, minutes_left, time_source]
+      properties:
+        label: { type: string }
+        state: { type: string, enum: [free, in_use, unknown] }
+        pending_state: { type: [string, "null"] }
+        since: { type: [string, "null"] }
+        updated_at: { type: [string, "null"] }
+        minutes_left: { type: [integer, "null"] }
+        time_source: { type: [string, "null"], enum: [estimated, display, null] }
+    IngestInput:
+      type: object
+      required: [token, image, changed]
+      properties:
+        token: { type: string, minLength: 1 }
+        image: { type: string, description: Base64 JPEG without data URL prefix, minLength: 1, maxLength: 2000000 }
+        changed: { type: boolean }
+    IngestReply:
+      type: object
+      required: [analysed, status, recheck, last_analysed_at]
+      properties:
+        analysed: { type: boolean }
+        status: { $ref: "#/components/schemas/Zone" }
+        recheck: { type: boolean }
+        last_analysed_at: { type: [string, "null"] }
     HealthStatus:
       type: object
       properties:

@@ -1,0 +1,35 @@
+kind = "web"
+previewPath = "/"
+title = "Orbit"
+description = "Mobile-first shared facility status for hostel residents, powered by privacy-conscious camera snapshots and Gemini."
+version = "1.0.0"
+id = "artifacts/orbit"
+router = "path"
+
+[[services]]
+name = "web"
+paths = ["/"]
+localPort = 22982
+
+[services.development]
+run = "pnpm --filter @workspace/orbit run dev"
+
+[services.production.build]
+args = ["pnpm", "--filter", "@workspace/orbit", "run", "build:full"]
+
+[services.production.build.env]
+NODE_ENV = "production"
+
+[services.production.run]
+args = ["node", "--enable-source-maps", "artifacts/api-server/dist/index.mjs"]
+
+[services.production.run.env]
+PORT = "22982"
+NODE_ENV = "production"
+
+[services.production.health.startup]
+path = "/api/healthz"
+
+[services.env]
+PORT = "22982"
+BASE_PATH = "/"

@@ -4,11 +4,13 @@
     "incremental": true,
     "tsBuildInfoFile": ".tsbuildinfo",
     "outDir": "dist",
-    "rootDir": "src",
+    "rootDir": ".",
     "types": ["node"]
   },
-  "include": ["src"],
+  "include": ["src", "server"],
+  "exclude": ["**/*.test.ts"],
   "references": [
+    { "path": "../../lib/integrations-gemini-ai" },
     {
       "path": "../../lib/db"
     },

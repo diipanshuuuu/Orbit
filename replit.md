@@ -67,3 +67,7 @@ Done when: an alert reaches a locked Android phone.
 
 **10. CCTV bridge.** scripts/rtsp-bridge.sh: a loop that uses ffmpeg to grab one frame from RTSP_URL every 60 s and posts it to /api/ingest with CAMERA_TOKEN. When a frame arrives without a changed value, the server makes the same 64x36 thumbnail comparison itself to decide whether it changed. Add a README section on running it.
 Done when: it runs on a laptop against a test stream (an IP-camera app on a spare phone).
+
+## Approved First build overrides
+- Use gemini-3.8-flash for now and keep it configurable through VISION_MODEL.
+- Set MAX_AI_CALLS_PER_DAY to 200 by default.
