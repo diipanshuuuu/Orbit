@@ -12,6 +12,7 @@ import type { ZoneType } from './zoneType';
 export interface Zone {
   slug: string;
   name: string;
+  is_demo: boolean;
   type: ZoneType;
   state: ZoneState;
   /** @nullable */

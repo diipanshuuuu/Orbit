@@ -9,10 +9,12 @@ export function FeedbackRow({
   zoneSlug,
   status,
   unitLabel = null,
+  isDemo = false,
 }: {
   zoneSlug: string;
   status: FeedbackInput["status_shown"];
   unitLabel?: string | null;
+  isDemo?: boolean;
 }) {
   const queryClient = useQueryClient();
   const { toast } = useToast();
@@ -60,7 +62,7 @@ export function FeedbackRow({
         <p className="text-sm font-semibold">{unitLabel ? "Is this unit status right?" : "Is this right?"}</p>
         {saved ? (
           <p className="text-xs text-muted-foreground" role="status">
-            {saved === "down" ? "Thanks — the camera will re-check this room." : "Thanks for confirming."}
+            {saved === "down" ? isDemo ? "Thanks — demo feedback saved. This schedule is simulated." : "Thanks — the camera will re-check this room." : "Thanks for confirming."}
           </p>
         ) : (
           <p className="text-xs text-muted-foreground">Your feedback is anonymous.</p>

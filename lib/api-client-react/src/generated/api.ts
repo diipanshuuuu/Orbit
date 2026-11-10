@@ -379,7 +379,7 @@ return customFetch<AdminSaved>(getUpdateAdminZoneUrl(id),
 
 export const getUpdateAdminZoneMutationKey = () => ['updateAdminZone'] as const;
 
-export const getUpdateAdminZoneMutationOptions = <TError = ErrorType<unknown>,
+export const getUpdateAdminZoneMutationOptions = <TError = ErrorType<void>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateAdminZone>>, TError,UpdateAdminZoneMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof updateAdminZone>>, TError,UpdateAdminZoneMutationVariables, TContext> => {
 
@@ -408,10 +408,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type UpdateAdminZoneMutationResult = NonNullable<Awaited<ReturnType<typeof updateAdminZone>>>
     export type UpdateAdminZoneMutationBody = BodyType<AdminZoneInput>
-    export type UpdateAdminZoneMutationError = ErrorType<unknown>
+    export type UpdateAdminZoneMutationError = ErrorType<void>
     export type UpdateAdminZoneMutationVariables = {id: number;data: BodyType<AdminZoneInput>}
 
-    export const useUpdateAdminZone = <TError = ErrorType<unknown>,
+    export const useUpdateAdminZone = <TError = ErrorType<void>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateAdminZone>>, TError,UpdateAdminZoneMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof updateAdminZone>>,
@@ -447,7 +447,7 @@ export const createAdminCamera = async (id: number, options?: Parameters<typeof 
 
 export const getCreateAdminCameraMutationKey = () => ['createAdminCamera'] as const;
 
-export const getCreateAdminCameraMutationOptions = <TError = ErrorType<unknown>,
+export const getCreateAdminCameraMutationOptions = <TError = ErrorType<void>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createAdminCamera>>, TError,CreateAdminCameraMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof createAdminCamera>>, TError,CreateAdminCameraMutationVariables, TContext> => {
 
@@ -476,10 +476,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type CreateAdminCameraMutationResult = NonNullable<Awaited<ReturnType<typeof createAdminCamera>>>
 
-    export type CreateAdminCameraMutationError = ErrorType<unknown>
+    export type CreateAdminCameraMutationError = ErrorType<void>
     export type CreateAdminCameraMutationVariables = {id: number}
 
-    export const useCreateAdminCamera = <TError = ErrorType<unknown>,
+    export const useCreateAdminCamera = <TError = ErrorType<void>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createAdminCamera>>, TError,CreateAdminCameraMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof createAdminCamera>>,

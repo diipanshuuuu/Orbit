@@ -55,7 +55,7 @@ describe("all private admin routes", () => {
   });
   it("returns the current protected dashboard, including existing camera links", async () => {
     const data = { day: "2026-11-11", zones: [{
-      ...input, id: 1, slug: "common-room", name: "Common room", type: "crowd", units: [],
+      ...input, id: 1, slug: "common-room", name: "Common room", type: "crowd", is_demo: false, units: [],
       cameras: [{
         id: 1, path: "/cam/test-token-not-a-real-camera", last_seen_at: null,
         last_analysed_at: null, has_frame: true, frames_received: 10, analysed: 2, allowance_left: 49.5,
@@ -106,6 +106,12 @@ describe("all private admin routes", () => {
     expect(await created.json()).toEqual({ id: 8 });
     expect((await fetch(url + "/admin/zones/99/cameras", { method: "POST", headers })).status).toBe(404);
     expect((await fetch(url + "/admin/zones/nope/cameras", { method: "POST", headers })).status).toBe(400);
+  });
+  it("rejects camera creation and edits for fixed demo zones", async () => {
+    store.createCamera.mockResolvedValue("demo-zone");
+    expect((await fetch(url + "/admin/zones/7/cameras", { method: "POST", headers })).status).toBe(409);
+    store.saveAdminZone.mockResolvedValue("demo-zone");
+    expect((await fetch(url + "/admin/zones/7", { method: "PUT", headers, body: JSON.stringify(input) })).status).toBe(409);
   });
   it("serves only the single latest frame after authorization", async () => {
     store.latestAdminFrame.mockResolvedValueOnce({ image: "synthetic-frame" }).mockResolvedValueOnce({ image: null }).mockResolvedValueOnce(null);

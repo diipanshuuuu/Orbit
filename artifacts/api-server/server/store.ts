@@ -1,7 +1,7 @@
 import { db, zones, cameras, units, unitStatuses, zoneStatuses, readings, cameraDaily } from "@workspace/db";
 import { eq, desc, sql } from "drizzle-orm";
 import type { ZoneRow } from "@workspace/db";
-import { crowdLevel, freshness, refillAllowance, remainingTime, shouldAnalyse, transitionUnit } from "./status";
+import { crowdLevel, demoStatus, freshness, refillAllowance, remainingTime, shouldAnalyse, transitionUnit } from "./status";
 import { MAX_AI_CALLS_PER_DAY } from "./config";
 import { analyzeFrame } from "./vision";
 import type { IngestInput } from "@workspace/api-zod";
@@ -11,6 +11,14 @@ type Store = Pick<typeof db, "select">;
 const iso = (date: Date | null | undefined) => date?.toISOString() ?? null;
 
 export async function publicZone(store: Store, zone: ZoneRow, now: Date) {
+  if (zone.isDemo) {
+    const labels = await store.select({ label: units.label }).from(units)
+      .where(eq(units.zoneId, zone.id)).orderBy(units.id);
+    return {
+      slug: zone.slug, name: zone.name, type: zone.type,
+      ...demoStatus(zone, zone.demoTimeline, labels.map((unit) => unit.label), now),
+    };
+  }
   // Explicitly project public columns. Tokens, frames, raw readings never leave here.
   const seen = await store.select({ lastSeenAt: cameras.lastSeenAt }).from(cameras)
     .where(eq(cameras.zoneId, zone.id)).orderBy(desc(cameras.lastSeenAt));
@@ -21,7 +29,7 @@ export async function publicZone(store: Store, zone: ZoneRow, now: Date) {
     .leftJoin(unitStatuses, eq(unitStatuses.unitId, units.id)).where(eq(units.zoneId, zone.id));
   const health = freshness(lastSeenAt, zone.checkedAt, now, zone.forceRecheck);
   return {
-    slug: zone.slug, name: zone.name, type: zone.type,
+    slug: zone.slug, name: zone.name, type: zone.type, is_demo: false,
     state: health === "live" ? status?.state ?? "unknown" : health,
     people_count: health === "live" ? status?.peopleCount ?? null : null,
     checked_at: iso(zone.checkedAt), last_seen_at: iso(lastSeenAt),
@@ -52,7 +60,7 @@ export async function ingest(input: IngestInput) {
     // Zone lock serializes different cameras for the same zone, across Autoscale instances.
     // Held until analysis and status changes commit, never a process-local mutex or queue.
     const [zone] = await tx.select().from(zones).where(eq(zones.id, known.zoneId)).for("update");
-    if (!zone) return null;
+    if (!zone || zone.isDemo) return null;
     const [camera] = await tx.select().from(cameras).where(eq(cameras.token, input.token)).for("update");
     if (!camera) return null;
     const now = new Date();

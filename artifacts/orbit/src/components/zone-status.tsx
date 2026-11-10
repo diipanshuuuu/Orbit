@@ -4,6 +4,10 @@ import { cn } from "@/lib/utils";
 
 export type Tone = "low" | "medium" | "high" | "grey";
 
+export function DemoBadge() {
+  return <span className="inline-flex rounded-full border bg-muted px-2.5 py-1 text-[11px] font-semibold tracking-normal" data-testid="badge-demo">Demo data</span>;
+}
+
 export function isLive(zone: Zone) {
   return zone.state !== "offline" && zone.state !== "re-checking";
 }
@@ -71,6 +75,11 @@ export function KeyNumber({ zone }: { zone: Zone }) {
 }
 
 export function Freshness({ zone, now }: { zone: Zone; now: number }) {
+  if (zone.is_demo) {
+    return <span data-testid={"text-fresh-" + zone.slug} className="font-mono text-xs text-muted-foreground">
+      {zone.state === "re-checking" ? "Demo schedule unavailable — reconnect to update" : "Simulated daily schedule · India time"}
+    </span>;
+  }
   if (zone.state === "offline") {
     const seen = ago(zone.last_seen_at, now);
     return (

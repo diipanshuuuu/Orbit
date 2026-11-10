@@ -13,6 +13,7 @@ import type { AdminZoneInput } from './adminZoneInput';
 export type AdminZone = AdminZoneInput & ({
   id: number;
   slug: string;
+  is_demo: boolean;
   cameras: AdminCamera[];
   readings: AdminReading[];
   feedback_count: number;

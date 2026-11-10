@@ -9,6 +9,7 @@ import { FeedbackList } from "./feedback-list";
 import { useAdminMutations } from "@/hooks/use-admin";
 import { errorMessage, errorStatus } from "@/lib/admin-auth";
 import { useToast } from "@/hooks/use-toast";
+import { DemoBadge } from "@/components/zone-status";
 
 export function ZonePanel({ zone, passcode, onUnauthorized }: { zone: AdminZone; passcode: string; onUnauthorized: () => void }) {
   const [editing, setEditing] = useState(false);
@@ -44,9 +45,10 @@ export function ZonePanel({ zone, passcode, onUnauthorized }: { zone: AdminZone;
         <div className="min-w-0">
           <p className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">{zone.type === "machines" ? "Machines" : "Room"}</p>
           <h2 className="text-xl font-bold mt-0.5 truncate" data-testid={`text-zone-name-${zone.id}`}>{zone.name}</h2>
+          {zone.is_demo && <div className="my-1"><DemoBadge /></div>}
           <Link href={"/z/" + zone.slug} className="font-mono text-xs text-primary" data-testid={`link-zone-${zone.id}`}>/z/{zone.slug}</Link>
         </div>
-        {!editing && (
+        {!editing && !zone.is_demo && (
           <button data-testid={`button-edit-${zone.id}`} onClick={() => setEditing(true)} className="shrink-0 inline-flex items-center gap-1.5 rounded-full border px-3.5 py-2 text-sm font-semibold"><Pencil className="h-3.5 w-3.5" /> Edit</button>
         )}
       </div>
@@ -64,12 +66,14 @@ export function ZonePanel({ zone, passcode, onUnauthorized }: { zone: AdminZone;
       )}
 
       <div className="mt-5 space-y-3">
+        {zone.is_demo ? <p className="rounded-2xl border border-dashed p-4 text-sm text-muted-foreground">Fixed 24-hour demo schedule, in India time. No camera or AI is used.</p> : <>
         {zone.cameras.length === 0 && <p className="rounded-2xl border border-dashed p-4 text-sm text-muted-foreground">No camera yet. Create one, then open its link on a spare phone.</p>}
         {zone.cameras.map((c, i) => <CameraCard key={c.id} cam={c} index={i} passcode={passcode} onUnauthorized={onUnauthorized} />)}
         <button data-testid={`button-add-camera-${zone.id}`} onClick={addCamera} disabled={createCamera.isPending} className="w-full inline-flex items-center justify-center gap-2 rounded-full border-2 border-dashed py-2.5 text-sm font-semibold text-primary disabled:opacity-60">
           {createCamera.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />} {createCamera.isPending ? "Creating" : "Create camera"}
         </button>
         <ReadingsList readings={zone.readings} zoneId={zone.id} />
+        </>}
         <FeedbackList feedback={zone.feedback} count={zone.feedback_count} agreementRate={zone.agreement_rate} zoneId={zone.id} />
       </div>
     </section>

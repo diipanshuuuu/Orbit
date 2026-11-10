@@ -45,6 +45,7 @@ export const GetAdminDashboardResponse = zod.object({
 }).and(zod.object({
   "id": zod.number().int(),
   "slug": zod.string(),
+  "is_demo": zod.boolean(),
   "cameras": zod.array(zod.object({
   "id": zod.number().int(),
   "path": zod.string(),
@@ -242,6 +243,7 @@ export const LogUsageEventResponse = zod.object({
 export const GetZonesResponseItem = zod.object({
   "slug": zod.string(),
   "name": zod.string(),
+  "is_demo": zod.boolean(),
   "type": zod.enum(['crowd', 'machines']),
   "state": zod.enum(['low', 'medium', 'high', 'unknown', 'offline', 're-checking']),
   "people_count": zod.number().int().nullable(),
@@ -276,6 +278,7 @@ export const IngestFrameResponse = zod.object({
   "status": zod.object({
   "slug": zod.string(),
   "name": zod.string(),
+  "is_demo": zod.boolean(),
   "type": zod.enum(['crowd', 'machines']),
   "state": zod.enum(['low', 'medium', 'high', 'unknown', 'offline', 're-checking']),
   "people_count": zod.number().int().nullable(),

@@ -4,7 +4,8 @@ import type { Zone } from "@workspace/api-client-react";
 export function maskStaleZone(zone: Zone, now: number): Zone {
   const seen = zone.last_seen_at ? Date.parse(zone.last_seen_at) : 0;
   const checked = zone.checked_at ? Date.parse(zone.checked_at) : 0;
-  const state = !seen || now - seen >= 300_000 ? "offline"
+  const state = zone.is_demo ? (!checked || now - checked >= 300_000 ? "re-checking" : zone.state)
+    : !seen || now - seen >= 300_000 ? "offline"
     : !checked || now - checked >= 300_000 ? "re-checking" : zone.state;
   if (state !== "offline" && state !== "re-checking") return zone;
   return {

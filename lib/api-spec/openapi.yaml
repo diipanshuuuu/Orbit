@@ -65,6 +65,7 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/AdminSaved" }
+        "409": { description: Demo zones use a fixed stored schedule }
   /admin/zones/{id}/cameras:
     post:
       operationId: createAdminCamera
@@ -77,6 +78,7 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/AdminSaved" }
+        "409": { description: Demo zones cannot use cameras }
   /admin/cameras/{id}/frame:
     get:
       operationId: getAdminCameraFrame
@@ -212,10 +214,11 @@ components:
       allOf:
         - { $ref: "#/components/schemas/AdminZoneInput" }
         - type: object
-          required: [id, slug, cameras, readings, feedback_count, agreement_rate, feedback]
+          required: [id, slug, is_demo, cameras, readings, feedback_count, agreement_rate, feedback]
           properties:
             id: { type: integer }
             slug: { type: string }
+            is_demo: { type: boolean }
             cameras:
               type: array
               items: { $ref: "#/components/schemas/AdminCamera" }
@@ -303,10 +306,11 @@ components:
           items: { $ref: "#/components/schemas/AdminZone" }
     Zone:
       type: object
-      required: [slug, name, type, state, people_count, checked_at, last_seen_at, units]
+      required: [slug, name, type, is_demo, state, people_count, checked_at, last_seen_at, units]
       properties:
         slug: { type: string }
         name: { type: string }
+        is_demo: { type: boolean }
         type: { type: string, enum: [crowd, machines] }
         state: { type: string, enum: [low, medium, high, unknown, offline, re-checking] }
         people_count: { type: [integer, "null"] }

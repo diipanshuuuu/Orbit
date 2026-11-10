@@ -115,6 +115,7 @@ export interface AdminFeedback {
 export type AdminZone = AdminZoneInput & ({
   id: number;
   slug: string;
+  is_demo: boolean;
   cameras: AdminCamera[];
   readings: AdminReading[];
   feedback_count: number;
@@ -290,6 +291,7 @@ export interface UnitStatus {
 export interface Zone {
   slug: string;
   name: string;
+  is_demo: boolean;
   type: ZoneType;
   state: ZoneState;
   /** @nullable */

@@ -28,7 +28,7 @@ export async function adminDashboard() {
         .where(eq(feedback.zoneId, zone.id))
         .orderBy(desc(feedback.createdAt), desc(feedback.id)).limit(20);
       return {
-        id: zone.id, slug: zone.slug, name: zone.name, type: zone.type, layout_hint: zone.layoutHint,
+        id: zone.id, slug: zone.slug, name: zone.name, type: zone.type, is_demo: zone.isDemo, layout_hint: zone.layoutHint,
         low_max: zone.lowMax, high_min: zone.highMin, typical_cycle_min: zone.typicalCycleMin,
         active_start: zone.activeStart, active_end: zone.activeEnd, units: labels.map((row) => row.label),
         cameras: cameraRows.map(({ camera, daily }) => ({
@@ -52,8 +52,9 @@ export async function adminDashboard() {
 export async function saveAdminZone(input: z.infer<typeof adminZoneInput>, id?: number) {
   return db.transaction(async (tx) => {
     if (id) {
-      const [existing] = await tx.select({ id: zones.id }).from(zones).where(eq(zones.id, id)).for("update");
+      const [existing] = await tx.select({ id: zones.id, isDemo: zones.isDemo }).from(zones).where(eq(zones.id, id)).for("update");
       if (!existing) return null;
+      if (existing.isDemo) return "demo-zone" as const;
     }
     const values = {
       name: input.name, type: input.type, layoutHint: input.layout_hint,
@@ -88,8 +89,9 @@ export async function saveAdminZone(input: z.infer<typeof adminZoneInput>, id?: 
 
 export async function createCamera(zoneId: number) {
   return db.transaction(async (tx) => {
-    const [zone] = await tx.select({ id: zones.id }).from(zones).where(eq(zones.id, zoneId)).for("update");
+    const [zone] = await tx.select({ id: zones.id, isDemo: zones.isDemo }).from(zones).where(eq(zones.id, zoneId)).for("update");
     if (!zone) return null;
+    if (zone.isDemo) return "demo-zone" as const;
     const [camera] = await tx.insert(cameras).values({
       zoneId, token: randomBytes(32).toString("hex"), allowance: MAX_AI_CALLS_PER_DAY / 4,
     }).returning({ id: cameras.id });

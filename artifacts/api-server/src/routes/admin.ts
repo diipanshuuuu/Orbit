@@ -27,6 +27,7 @@ router.put("/admin/zones/:id", async (req, res): Promise<void> => {
   if (!id.success || !parsed.success) { res.status(400).json({ error: !parsed.success ? parsed.error.issues[0]?.message : "Invalid zone ID." }); return; }
   const saved = await saveAdminZone(parsed.data, id.data);
   if (!saved) { res.status(404).json({ error: "Zone not found." }); return; }
+  if (saved === "demo-zone") { res.status(409).json({ error: "Demo zones use a fixed stored schedule and cannot be edited." }); return; }
   res.json(UpdateAdminZoneResponse.parse(saved));
 });
 router.post("/admin/zones/:id/cameras", async (req, res): Promise<void> => {
@@ -34,6 +35,7 @@ router.post("/admin/zones/:id/cameras", async (req, res): Promise<void> => {
   if (!id.success) { res.status(400).json({ error: "Invalid zone ID." }); return; }
   const camera = await createCamera(id.data);
   if (!camera) { res.status(404).json({ error: "Zone not found." }); return; }
+  if (camera === "demo-zone") { res.status(409).json({ error: "Demo zones do not use cameras." }); return; }
   res.status(201).json(CreateAdminCameraResponse.parse(camera));
 });
 router.get("/admin/cameras/:id/frame", async (req, res): Promise<void> => {

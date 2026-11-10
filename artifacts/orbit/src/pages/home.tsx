@@ -2,7 +2,7 @@ import { Link } from "wouter";
 import { ChevronRight, RefreshCw } from "lucide-react";
 import { useZones } from "@/hooks/use-zones";
 import { useNow } from "@/lib/time";
-import { StatusPill, KeyNumber, Freshness, zoneTone, toneVar } from "@/components/zone-status";
+import { DemoBadge, StatusPill, KeyNumber, Freshness, zoneTone, toneVar } from "@/components/zone-status";
 import { Shell } from "@/components/shell";
 
 export default function Home() {
@@ -52,6 +52,7 @@ export default function Home() {
                 <div>
                   <p className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">{z.type === "machines" ? "Machines" : "Room"}</p>
                   <h2 className="text-xl font-bold mt-0.5">{z.name}</h2>
+                  {z.is_demo && <div className="mt-1.5"><DemoBadge /></div>}
                 </div>
                 <ChevronRight className="h-5 w-5 text-muted-foreground transition-transform group-hover:translate-x-1" />
               </div>

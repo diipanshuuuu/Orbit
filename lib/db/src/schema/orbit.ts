@@ -12,6 +12,7 @@ export const zones = pgTable("zones", {
   highMin: integer("high_min").notNull().default(15),
   typicalCycleMin: integer("typical_cycle_min").notNull().default(45),
   isDemo: boolean("is_demo").notNull().default(false),
+  demoTimeline: jsonb("demo_timeline"),
   checkedAt: instant("checked_at"),
   activeStart: text("active_start"),
   activeEnd: text("active_end"),
