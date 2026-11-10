@@ -16,7 +16,9 @@ app.use(
         return {
           id: req.id,
           method: req.method,
-          url: req.url?.split("?")[0]?.replace(/\/cam\/[^/]+/, "/cam/[redacted]"),
+          url: req.url
+            ?.split("?")[0]
+            ?.replace(/\/cam\/[^/]+/, "/cam/[redacted]"),
         };
       },
       res(res) {
@@ -31,17 +33,35 @@ app.use(cors());
 app.use(express.json({ limit: "3mb" }));
 app.use(express.urlencoded({ extended: true }));
 
+// Seed once per server process, not on every request.
+let seeded: Promise<void> | null = null;
 app.use(async (req, _res, next) => {
-  if (req.path === "/api/healthz") { next(); return; }
-  // Accept only URL origins, never use a user-provided path in the seed link.
-  const host = req.get("x-forwarded-host")?.split(",")[0]?.trim() || req.get("host");
-  if (!host || !/^[a-zA-Z0-9.:[\]-]+$/.test(host)) { next(new Error("Invalid request host")); return; }
-  const protocol = req.get("x-forwarded-proto") === "https" || req.secure ? "https" : "http";
-  await seedIfEmpty(`${protocol}://${host}`);
+  if (req.path === "/api/healthz") {
+    next();
+    return;
+  }
+  if (!seeded) {
+    // Accept only URL origins, never use a user-provided path in the seed link.
+    const host =
+      req.get("x-forwarded-host")?.split(",")[0]?.trim() || req.get("host");
+    if (!host || !/^[a-zA-Z0-9.:[\]-]+$/.test(host)) {
+      next(new Error("Invalid request host"));
+      return;
+    }
+    const protocol =
+      req.get("x-forwarded-proto") === "https" || req.secure ? "https" : "http";
+    seeded = seedIfEmpty(`${protocol}://${host}`).catch((error) => {
+      seeded = null;
+      throw error;
+    });
+  }
+  await seeded;
   next();
 });
 app.use("/api", router);
-app.use("/api", (_req, res) => { res.status(404).json({ error: "API route not found." }); });
+app.use("/api", (_req, res) => {
+  res.status(404).json({ error: "API route not found." });
+});
 
 // In production the same Express process serves the Vite build. No second server.
 if (process.env.NODE_ENV === "production") {
@@ -59,9 +79,21 @@ if (process.env.NODE_ENV === "production") {
 }
 const handleError: ErrorRequestHandler = (error, req, res, _next) => {
   // Avoid logging request body or external API errors containing frame data.
-  const status = error?.type === "entity.too.large" ? 413 : error?.type === "entity.parse.failed" ? 400 : 500;
+  const status =
+    error?.type === "entity.too.large"
+      ? 413
+      : error?.type === "entity.parse.failed"
+        ? 400
+        : 500;
   req.log.error({ status }, "Request failed");
-  res.status(status).json({ error: status === 500 ? "Request could not be completed. Please retry." : "Invalid or oversized request." });
+  res
+    .status(status)
+    .json({
+      error:
+        status === 500
+          ? "Request could not be completed. Please retry."
+          : "Invalid or oversized request.",
+    });
 };
 app.use(handleError);
 
