@@ -1,1 +1,25 @@
-[]
+[
+  { "file": "photo01.jpg", "zone_type": "crowd", "people_count": 0 },
+  { "file": "photo02.jpg", "zone_type": "crowd", "people_count": 0 },
+  { "file": "photo03.jpg", "zone_type": "crowd", "people_count": 0 },
+  { "file": "photo04.jpg", "zone_type": "crowd", "people_count": 0 },
+  { "file": "photo05.jpg", "zone_type": "crowd", "people_count": 0 },
+  { "file": "photo06.jpg", "zone_type": "crowd", "people_count": 1 },
+  { "file": "photo07.jpg", "zone_type": "crowd", "people_count": 1 },
+  { "file": "photo08.jpg", "zone_type": "crowd", "people_count": 1 },
+  { "file": "photo09.jpg", "zone_type": "crowd", "people_count": 1 },
+  { "file": "photo10.jpg", "zone_type": "crowd", "people_count": 1 },
+  { "file": "photo11.jpg", "zone_type": "crowd", "people_count": 1 },
+  { "file": "photo12.jpg", "zone_type": "crowd", "people_count": 1 },
+  { "file": "photo13.jpg", "zone_type": "crowd", "people_count": 3 },
+  { "file": "photo14.jpg", "zone_type": "crowd", "people_count": 3 },
+  { "file": "photo15.jpg", "zone_type": "crowd", "people_count": 3 },
+  { "file": "photo16.jpg", "zone_type": "crowd", "people_count": 3 },
+  { "file": "photo17.jpg", "zone_type": "crowd", "people_count": 1 },
+  { "file": "photo18.jpg", "zone_type": "crowd", "people_count": 1 },
+  { "file": "photo19.jpg", "zone_type": "crowd", "people_count": 1 },
+  { "file": "photo20.jpg", "zone_type": "crowd", "people_count": 1 },
+  { "file": "photo21.jpg", "zone_type": "crowd", "people_count": 1 },
+  { "file": "photo22.jpg", "zone_type": "crowd", "people_count": 3 },
+  { "file": "photo23.jpg", "zone_type": "crowd", "people_count": 0, "view_blocked": true }
+]
