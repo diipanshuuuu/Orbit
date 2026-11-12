@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "eval": "tsx ./src/eval.ts",
     "hello": "tsx ./src/hello.ts",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },

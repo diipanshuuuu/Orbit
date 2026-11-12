@@ -33,14 +33,18 @@ Return JSON only:
 - units: one entry per listed unit with state ("free" | "in_use" | "unknown"), timer_minutes (the number on its display if you can read it clearly, otherwise null), confidence (0 to 1), evidence (up to 12 words on what you saw).
 Rules: report only what is visible. If a unit is hidden or unclear, answer "unknown" rather than guessing; a wrong "free" is the worst mistake. Do not describe or identify any person.`;
 }
-export async function analyzeFrame(image: string, zone: VisionZone): Promise<VisionResult> {
+export async function analyzeFrame(
+  image: string,
+  zone: VisionZone,
+  mimeType = "image/jpeg",
+): Promise<VisionResult> {
   try {
     const { ai, ThinkingLevel } = await import("@workspace/integrations-gemini-ai");
     const response = await ai.models.generateContent({
       model: VISION_MODEL,
       contents: [{ role: "user", parts: [
         { text: visionPrompt(zone) },
-        { inlineData: { mimeType: "image/jpeg", data: image } },
+        { inlineData: { mimeType, data: image } },
       ] }],
       config: {
         responseMimeType: "application/json",

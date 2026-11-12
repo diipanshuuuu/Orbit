@@ -28,6 +28,16 @@ describe("vision sensor boundary", () => {
     expect(request.config.thinkingConfig.thinkingLevel).toBe("LOW");
     expect(request.config.httpOptions.retryOptions.attempts).toBe(1);
   });
+  it("allows PNG evaluation images while keeping JPEG as the default", async () => {
+    respond({ scene_ok: true, people_count: 2, units: [unit] });
+    await analyzeFrame("png-base64", zone, "image/png");
+    expect(generateContent.mock.calls[0]![0].contents[0].parts[1].inlineData.mimeType).toBe("image/png");
+
+    generateContent.mockClear();
+    respond({ scene_ok: true, people_count: 2, units: [unit] });
+    await analyzeFrame("jpeg-base64", zone);
+    expect(generateContent.mock.calls[0]![0].contents[0].parts[1].inlineData.mimeType).toBe("image/jpeg");
+  });
   it("makes blocked scenes unknown even when model says free", async () => {
     respond({ scene_ok: false, people_count: 0, units: [{ ...unit, state: "free" }] });
     const result = await analyzeFrame("test", zone);
